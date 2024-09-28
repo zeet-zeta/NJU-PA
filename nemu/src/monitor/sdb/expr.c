@@ -21,6 +21,7 @@
 #include <regex.h>
 #include <errno.h>
 #include <limits.h>
+#include <memory/vaddr.h>
 
 enum {
   TK_NOTYPE = 256,
@@ -198,8 +199,10 @@ bool check_parentheses(int p, int q) {
   return counter == 0;
 } //检查字符串是否被一对括号包围
 
-
 word_t eval(int p, int q) {
+  if (p < q) {
+    return 0; //处理一元运算符的val1
+  }
   if (p == q) {
     switch (tokens[p].type) {
       case TK_DEC:
@@ -222,9 +225,9 @@ word_t eval(int p, int q) {
         break;
       case TK_REG:
         bool success;
-        word_t temp = isa_reg_str2val(tokens[p].str + 1, &success);
+        word_t t = isa_reg_str2val(tokens[p].str + 1, &success);
         if (success) {
-          return temp;
+          return t;
         } else {
           Log("TK_REG failed");
           return (word_t) 0;
@@ -236,9 +239,99 @@ word_t eval(int p, int q) {
     }
   } else if (check_parentheses(p, q)) {
     return eval(p + 1, q - 1); //去掉头尾括号
-  } else if (p < q) {
-    
+  } else if (p < q) { //最麻烦
+    int bracket_counter = 0;
+    int priority = 100;
+    int op_index = -1;
+    for (int i = p; i <= q; i++) {
+      int cur = tokens[i].type;
+      if (cur == TK_LB) {
+        bracket_counter++;
+        continue;
+      } else if (cur == TK_RB) {
+        bracket_counter--;
+        if (bracket_counter < 0) {
+          Log("invalid bracket");
+          return 0;
+        }
+        continue;
+      }
+
+      if (bracket_counter > 0) {
+        continue;//还在括号里面
+      }
+
+      switch (cur) {
+        case TK_DEC:
+        case TK_HEX:
+        case TK_REG:
+          continue;
+        case TK_AND:
+          if (priority >= 0) {
+            priority = 0;
+            op_index = i;
+          }
+          break;
+        case TK_EQ:
+        case TK_NEQ:
+          if (priority >= 1) {
+            priority = 1;
+            op_index = i;
+          }
+          break;
+        case TK_PLUS:
+        case TK_MINUS:
+          if (priority >= 2) {
+            priority = 2;
+            op_index = i;
+          }
+          break;
+        case TK_MULTIPLE:
+        case TK_DIVIDE:
+          if (priority >= 3) {
+            priority = 3;
+            op_index = i;
+          }
+          break;
+        case TK_NEGATIVE:
+        case TK_DEREF:
+          if (priority >= 4) {
+            priority = 4;
+            op_index = i;
+          }
+          break;
+        default:
+          Log("why reach here");
+      }
+
+      word_t val1 = eval(p, op_index - 1);
+      word_t val2 = eval(op_index + 1, q);
+      switch (tokens[op_index].type) {
+        case TK_PLUS:
+          return val1 + val2;
+        case TK_MINUS:
+          return val1 - val2;
+        case TK_MULTIPLE:
+          return val1 * val2;
+        case TK_DIVIDE:
+          return val1 / val2;
+        case TK_NEGATIVE:
+          return -1 * val2;
+        case TK_DEREF:
+          return vaddr_read(val2, 4);
+        case TK_EQ:
+          return val1 == val2;
+        case TK_NEQ:
+          return val1 != val2;
+        case TK_AND:
+          return val1 && val2;
+        default:
+          Log("why reach here");
+      }
+    }
   }
+  Log("why reach here");
+  return 0;
 }
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {

@@ -19,7 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 
-static int is_batch_mode = false;
+static int is_batch_mode = false; //非交互
 
 void init_regex();
 void init_wp_pool();
@@ -45,14 +45,26 @@ static char* rl_gets() {
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
-}
+} //继续运行
 
 
 static int cmd_q(char *args) {
   return -1;
-}
+} //退出
 
-static int cmd_help(char *args);
+static int cmd_help(char *args); //帮助
+
+static int cmd_p(char *args) {
+  bool success;
+  word_t tmp = expr(args, &success);
+  if (success) {
+    printf("%u", tmp);
+    return 0;
+  } else {
+    printf("err");
+    return -1;
+  }
+}
 
 static struct {
   const char *name;
@@ -64,6 +76,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  {"p", "Expression", cmd_p}, 
 
 };
 
@@ -90,11 +103,11 @@ static int cmd_help(char *args) {
     printf("Unknown command '%s'\n", arg);
   }
   return 0;
-}
+} //帮助
 
 void sdb_set_batch_mode() {
   is_batch_mode = true;
-}
+} //设置非交互
 
 void sdb_mainloop() {
   if (is_batch_mode) {
