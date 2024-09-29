@@ -200,7 +200,7 @@ bool check_parentheses(int p, int q) {
 } //检查字符串是否被一对括号包围
 
 word_t eval(int p, int q) {
-  if (p < q) {
+  if (p > q) {
     return 0; //处理一元运算符的val1
   }
   if (p == q) {
