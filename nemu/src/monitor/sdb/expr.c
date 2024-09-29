@@ -89,7 +89,7 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[100];
 } Token;
 
 static Token tokens[5000] __attribute__((used)) = {};
@@ -129,7 +129,7 @@ static bool make_token(char *e) {
           case TK_DEC:
           case TK_HEX:
           case TK_REG:
-            if (substr_len > 31) {
+            if (substr_len > 99) {
               Log("too long");
               return false;
             } else {
