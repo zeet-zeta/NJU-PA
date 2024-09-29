@@ -58,10 +58,10 @@ static int cmd_p(char *args) {
   bool success;
   word_t tmp = expr(args, &success);
   if (success) {
-    printf("%u", tmp);
+    printf("%u\n", tmp);
     return 0;
   } else {
-    printf("err");
+    printf("err\n");
     return -1;
   }
 }
