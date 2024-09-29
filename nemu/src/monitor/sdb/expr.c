@@ -63,7 +63,7 @@ static struct rule {
   {"\\)", TK_RB},
   {"&&", TK_AND},
   {"!=", TK_NEQ},
-  {"\\$\\$0|\\$[0-9a-z]+", TK_REG},
+  {"\\$0|\\$\\$0|\\$[0-9a-z]+", TK_REG},
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -92,7 +92,7 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[10000] __attribute__((used)) = {};
+static Token tokens[100] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
