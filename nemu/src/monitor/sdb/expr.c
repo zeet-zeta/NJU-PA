@@ -317,7 +317,8 @@ word_t eval(int p, int q) {
       case TK_DIVIDE:
         return val1 / val2;
       case TK_NEGATIVE:
-        return -1 * val2;
+        word_t neg = -1;
+        return neg * val2;
       case TK_DEREF:
         return vaddr_read(val2, 4);
       case TK_EQ:
