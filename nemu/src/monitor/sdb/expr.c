@@ -303,31 +303,31 @@ word_t eval(int p, int q) {
         default:
           Log("why reach here");
       }
+    } //找主运算符
 
-      word_t val1 = eval(p, op_index - 1);
-      word_t val2 = eval(op_index + 1, q);
-      switch (tokens[op_index].type) {
-        case TK_PLUS:
-          return val1 + val2;
-        case TK_MINUS:
-          return val1 - val2;
-        case TK_MULTIPLE:
-          return val1 * val2;
-        case TK_DIVIDE:
-          return val1 / val2;
-        case TK_NEGATIVE:
-          return -1 * val2;
-        case TK_DEREF:
-          return vaddr_read(val2, 4);
-        case TK_EQ:
-          return val1 == val2;
-        case TK_NEQ:
-          return val1 != val2;
-        case TK_AND:
-          return val1 && val2;
-        default:
-          Log("why reach here");
-      }
+    word_t val1 = eval(p, op_index - 1);
+    word_t val2 = eval(op_index + 1, q);
+    switch (tokens[op_index].type) {
+      case TK_PLUS:
+        return val1 + val2;
+      case TK_MINUS:
+        return val1 - val2;
+      case TK_MULTIPLE:
+        return val1 * val2;
+      case TK_DIVIDE:
+        return val1 / val2;
+      case TK_NEGATIVE:
+        return -1 * val2;
+      case TK_DEREF:
+        return vaddr_read(val2, 4);
+      case TK_EQ:
+        return val1 == val2;
+      case TK_NEQ:
+        return val1 != val2;
+      case TK_AND:
+        return val1 && val2;
+      default:
+        Log("why reach here");
     }
   }
   Log("why reach here");
