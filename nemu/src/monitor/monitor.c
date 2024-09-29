@@ -127,7 +127,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize the simple debugger. */
   init_sdb();
 
-  // IFDEF(CONFIG_ITRACE, init_disasm());
+  IFDEF(CONFIG_ITRACE, init_disasm());
   //该死的调试不了
   /* Display welcome message. */
   welcome();
