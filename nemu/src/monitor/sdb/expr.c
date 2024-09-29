@@ -295,7 +295,7 @@ int eval(int p, int q) {
           break;
         case TK_NEGATIVE:
         case TK_DEREF:
-          if (priority >= 4) {
+          if (priority > 4) {
             priority = 4;
             op_index = i;
           }
