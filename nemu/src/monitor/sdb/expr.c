@@ -314,6 +314,10 @@ int eval(int p, int q) {
       case TK_MULTIPLE:
         return val1 * val2;
       case TK_DIVIDE:
+        if (val2 == 0) {
+          Log("devide 0");
+          return 0;
+        }
         return val1 / val2;
       case TK_NEGATIVE:
         int neg = -1;
