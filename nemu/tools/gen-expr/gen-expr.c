@@ -31,8 +31,53 @@ static char *code_format =
 "  return 0; "
 "}";
 
+const unsigned int MAX_UNSIGNED_INT = 4294967295;
+
+static inline int choose(int n) {
+  return rand() % n;
+}
+
+static inline unsigned int gen_num() {
+  return rand() % MAX_UNSIGNED_INT;
+}
+
+static inline char gen_op() {
+  switch (choose(4)) {
+    case 0: return '+';
+    case 1: return '-';
+    case 2: return '*';
+    case 3: return '/';
+  }
+  return '+';
+}
+
+static void gen_rand_expr_r(int *pos) {
+  if (*pos > 60000) return;
+  switch (choose(3)) {
+    case 0:
+      unsigned int num = gen_num();
+      *pos += sprintf(buf + *pos, "%u", num);
+      break;
+    case 1:
+      buf[*pos] = '(';
+      (*pos)++;
+      gen_rand_expr_r(pos);
+      buf[*pos] = ')';
+      (*pos)++;
+      break;
+    case 2:
+      gen_rand_expr_r(pos);
+      buf[*pos] = gen_op();
+      (*pos)++;
+      gen_rand_expr_r(pos);
+      break;
+  }
+}
+
 static void gen_rand_expr() {
-  buf[0] = '\0';
+  int pos = 0;
+  gen_rand_expr_r(&pos);
+  buf[pos] = '\0';
 }
 
 int main(int argc, char *argv[]) {
