@@ -75,7 +75,9 @@ static int cmd_p(char *args) {
 
     char *expression = strtok(NULL, " \n");
     unsigned int actual_result = expr(expression, &success);
-    if (actual_result != expected_result) {
+    if (actual_result == expected_result) {
+      printf("Test passed\n");
+    } else {
       printf("Test failed: expected %u, got %u for expression: %s\n", expected_result, actual_result, expression);
     }
   }

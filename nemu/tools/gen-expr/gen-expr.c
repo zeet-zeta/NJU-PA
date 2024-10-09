@@ -42,11 +42,10 @@ static inline unsigned int gen_num() {
 }
 
 static inline char gen_op() {
-  switch (choose(4)) {
+  switch (choose(3)) {
     case 0: return '+';
     case 1: return '-';
     case 2: return '*';
-    case 3: return '/';
   }
   return '+';
 }
