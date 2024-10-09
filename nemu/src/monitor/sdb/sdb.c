@@ -68,7 +68,7 @@ static int cmd_p(char *args) {
   //以下为随机测试代码
   bool success;
   FILE *file = fopen("/home/zeet/ics2024/nemu/tools/gen-expr/build/d.txt", "r");
-  char line[1000];
+  char line[10000];
   while (fgets(line, sizeof(line), file)) {
     char *token = strtok(line, " ");
     unsigned int expected_result = atoi(token);
