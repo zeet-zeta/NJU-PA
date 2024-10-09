@@ -52,7 +52,7 @@ static inline char gen_op() {
 }
 
 static void gen_rand_expr_r(int *pos) {
-  if (*pos > 60000) return;
+  if (*pos > 1000) return;
   switch (choose(3)) {
     case 0:
       unsigned int num = gen_num();
