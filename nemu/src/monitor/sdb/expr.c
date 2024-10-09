@@ -92,7 +92,7 @@ typedef struct token {
   char str[100];
 } Token;
 
-static Token tokens[5000] __attribute__((used)) = {};
+static Token tokens[1000] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
@@ -221,7 +221,6 @@ word_t eval(int p, int q) {
           number = (word_t) temp;
           return number;
         }
-        return (word_t) 0;
         break;
       case TK_REG:
         bool success;
@@ -298,7 +297,7 @@ word_t eval(int p, int q) {
           if (priority > 4) {
             priority = 4;
             op_index = i;
-          }
+          } //右结合
           break;
         default:
           Log("why reach here");
