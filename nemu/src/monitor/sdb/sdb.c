@@ -55,34 +55,34 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args); //帮助
 
 static int cmd_p(char *args) {
-  // bool success;
-  // word_t tmp = expr(args, &success);
-  // if (success) {
-  //   printf("%u\n", tmp);
-  //   return 0;
-  // } else {
-  //   printf("err\n");
-  //   return -1;
-  // }
+  bool success;
+  word_t tmp = expr(args, &success);
+  if (success) {
+    printf("%u\n", tmp);
+    return 0;
+  } else {
+    printf("err\n");
+    return -1;
+  }
   
   //以下为随机测试代码
-  bool success;
-  FILE *file = fopen("/home/zeet/ics2024/nemu/tools/gen-expr/build/d.txt", "r");
-  char line[10000];
-  while (fgets(line, sizeof(line), file)) {
-    char *token = strtok(line, " ");
-    unsigned int expected_result = atoi(token);
+  // bool success;
+  // FILE *file = fopen("/home/zeet/ics2024/nemu/tools/gen-expr/build/d.txt", "r");
+  // char line[10000];
+  // while (fgets(line, sizeof(line), file)) {
+  //   char *token = strtok(line, " ");
+  //   unsigned int expected_result = atoi(token);
 
-    char *expression = strtok(NULL, " \n");
-    unsigned int actual_result = expr(expression, &success);
-    if (actual_result == expected_result) {
-      printf("Test passed\n");
-    } else {
-      printf("Test failed: expected %u, got %u for expression: %s\n", expected_result, actual_result, expression);
-    }
-  }
-  fclose(file);
-  return 0;
+  //   char *expression = strtok(NULL, " \n");
+  //   unsigned int actual_result = expr(expression, &success);
+  //   if (actual_result == expected_result) {
+  //     printf("Test passed\n");
+  //   } else {
+  //     printf("Test failed: expected %u, got %u for expression: %s\n", expected_result, actual_result, expression);
+  //   }
+  // }
+  // fclose(file);
+  // return 0;
 }
 
 static struct {
