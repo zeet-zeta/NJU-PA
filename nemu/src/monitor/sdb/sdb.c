@@ -110,6 +110,13 @@ static int cmd_info(char* args) {
   }
 }
 
+static int cmd_x(char* args) {
+  char* n = strtok(args, " ");
+  char* e = strtok(NULL, " ");
+  printf("%s %s", n, e);
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -123,7 +130,8 @@ static struct {
   {"p", "Expression", cmd_p}, 
   {"w", "set a watchpoint", cmd_w},
   {"d", "delete a watchpoint", cmd_d},
-  {"info", "print all watchpoints", cmd_info}
+  {"info", "print all watchpoints", cmd_info},
+  {"x", "scan the memory", cmd_x}
 };
 
 #define NR_CMD ARRLEN(cmd_table)
