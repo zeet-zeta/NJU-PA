@@ -15,15 +15,6 @@
 
 #include "sdb.h"
 
-#define NR_WP 32
-
-typedef struct watchpoint {
-  int NO;
-  struct watchpoint *next;
-
-  /* TODO: Add more members if necessary */
-
-} WP;
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
@@ -33,6 +24,8 @@ void init_wp_pool() {
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
+    wp_pool[i].watch_expr[0] = '\0';
+    wp_pool[i].value = 0;
   }
 
   head = NULL;
@@ -40,4 +33,87 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+WP* new_wp(char* watch_expr) {
+  if (free_ == NULL) {
+    Log("no free space for watchpoint");
+    return NULL;
+  }
+  if (strlen(watch_expr) > NR_EXPR) {
+    Log("too long expr");
+    return NULL;
+  }
+  //取一个节点从free_到head
+  WP *old_head = head;
+  head = free_;
+  free_ = free_->next;
+  head->next = old_head;
+  strncpy(head->watch_expr, watch_expr, NR_EXPR);
+  bool success;
+  word_t value = expr(watch_expr, &success);
+  if (success) {
+    head->value = value;
+  } else {
+    Log("expr compute err");
+    head->value = 0;
+  }
+  return head;
+}
 
+void free_up(WP* wp) {
+  //取一个节点从head到free_
+  if (wp == NULL) {
+    Log("shouldn't be null");
+    return;
+  }
+  memset(wp->watch_expr, 0, sizeof(wp->watch_expr));
+  wp->value = 0;
+  wp->next = free_;
+  free_ = wp;
+  if (wp == head) {
+    head = wp->next;
+  } else {
+    WP *prev = head;
+    for (; prev->next != wp; prev = prev->next);
+    prev->next = wp->next;
+  }
+}
+
+void scan_all(bool* has_change) {
+  if (head == NULL) {
+    Log("no watchpoint");
+    return;
+  }
+  for (WP* cur = head; cur->next != NULL; cur = cur->next) {
+    bool success;
+    word_t new_value = expr(cur->watch_expr, &success);
+    if (new_value != cur->value) {
+      Log("watchpoint %d: %s change form %u to %u", cur->NO, cur->watch_expr, cur->value, new_value);
+      cur->value = new_value;
+      *has_change = true;
+    }
+  }
+}
+
+void print_all() {
+  if (head == NULL) {
+    Log("no watchpoint");
+    return;
+  }
+  for (WP* cur = head; cur->next != NULL; cur = cur->next) {
+    Log("watchpoint %d: %s = %u", cur->NO, cur->watch_expr, cur->value);
+  }
+}
+
+void delete_by_NO(int num) {
+  if (head == NULL) {
+    return;
+  }
+  for (WP* cur = head; cur->next != NULL; cur = cur->next) {
+    if (cur->NO == num) {
+      free_up(cur);
+      Log("delete watchpoint %d", num);
+      return;
+    }
+  }
+  Log("can't find");
+}

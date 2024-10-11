@@ -62,7 +62,7 @@ static int cmd_p(char *args) {
     return 0;
   } else {
     printf("err\n");
-    return -1;
+    return 0;
   }
   
   //以下为随机测试代码
@@ -85,6 +85,18 @@ static int cmd_p(char *args) {
   // return 0;
 }
 
+static int cmd_w(char* args) {
+  if (new_wp(args) == NULL) {
+    return 0;
+  }
+  return 0;
+}
+
+static int cmd_d(char* args) {
+  delete_by_NO(atoi(args));
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -96,7 +108,8 @@ static struct {
 
   /* TODO: Add more commands */
   {"p", "Expression", cmd_p}, 
-
+  {"w", "set a watchpoint", cmd_w},
+  {"d", "delete a watchpoint", cmd_d}
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -148,7 +161,7 @@ void sdb_mainloop() {
     if (args >= str_end) {
       args = NULL;
     }
-
+//感觉跟AM相关
 #ifdef CONFIG_DEVICE
     extern void sdl_clear_event_queue();
     sdl_clear_event_queue();
@@ -173,3 +186,4 @@ void init_sdb() {
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
+

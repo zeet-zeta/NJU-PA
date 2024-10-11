@@ -18,6 +18,21 @@
 
 #include <common.h>
 
+#define NR_WP 32
+#define NR_EXPR 200
+
+typedef struct watchpoint {
+  int NO;
+  struct watchpoint *next;
+
+  /* TODO: Add more members if necessary */
+  char watch_expr[NR_EXPR + 1];
+  word_t value;
+
+} WP;
+
 word_t expr(char *e, bool *success);
+WP* new_wp(char *);
+void delete_by_NO(int); 
 
 #endif
