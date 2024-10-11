@@ -97,6 +97,16 @@ static int cmd_d(char* args) {
   return 0;
 }
 
+static int cmd_info(char* args) {
+  if (strcmp(args, "w") == 0) {
+    print_all();
+    return 0;
+  } else {
+    Log("no such command");
+    return 0;
+  }
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -109,7 +119,8 @@ static struct {
   /* TODO: Add more commands */
   {"p", "Expression", cmd_p}, 
   {"w", "set a watchpoint", cmd_w},
-  {"d", "delete a watchpoint", cmd_d}
+  {"d", "delete a watchpoint", cmd_d},
+  {"info", "print all watchpoints", cmd_info}
 };
 
 #define NR_CMD ARRLEN(cmd_table)

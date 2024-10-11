@@ -66,8 +66,6 @@ void free_up(WP* wp) {
   }
   memset(wp->watch_expr, 0, sizeof(wp->watch_expr));
   wp->value = 0;
-  wp->next = free_;
-  free_ = wp;
   if (wp == head) {
     head = wp->next;
   } else {
@@ -75,6 +73,8 @@ void free_up(WP* wp) {
     for (; prev->next != wp; prev = prev->next);
     prev->next = wp->next;
   }
+  wp->next = free_;
+  free_ = wp;
 }
 
 void scan_all(bool* has_change) {
