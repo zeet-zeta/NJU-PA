@@ -79,14 +79,13 @@ void free_up(WP* wp) {
 
 void scan_all(bool* has_change) {
   if (head == NULL) {
-    Log("no watchpoint");
     return;
   }
   for (WP* cur = head; cur != NULL; cur = cur->next) {
     bool success;
     word_t new_value = expr(cur->watch_expr, &success);
     if (new_value != cur->value) {
-      Log("watchpoint %d: %s change form %u to %u", cur->NO, cur->watch_expr, cur->value, new_value);
+      printf("watchpoint %d: %s change form %u to %u\n", cur->NO, cur->watch_expr, cur->value, new_value);
       cur->value = new_value;
       *has_change = true;
     }
@@ -99,7 +98,7 @@ void print_all() {
     return;
   }
   for (WP* cur = head; cur != NULL; cur = cur->next) {
-    Log("watchpoint %d: %s = %u", cur->NO, cur->watch_expr, cur->value);
+    printf("watchpoint %d: %s = %u\n", cur->NO, cur->watch_expr, cur->value);
   }
 }
 
@@ -110,7 +109,7 @@ void delete_by_NO(int num) {
   for (WP* cur = head; cur != NULL; cur = cur->next) {
     if (cur->NO == num) {
       free_up(cur);
-      Log("delete watchpoint %d", num);
+      printf("delete watchpoint %d\n", num);
       return;
     }
   }

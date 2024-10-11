@@ -101,6 +101,9 @@ static int cmd_info(char* args) {
   if (strcmp(args, "w") == 0) {
     print_all();
     return 0;
+  } else if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+    return 0;
   } else {
     Log("no such command");
     return 0;
