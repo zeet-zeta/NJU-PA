@@ -98,10 +98,11 @@ void print_all() {
     Log("no watchpoint");
     return;
   }
-  Log("watchpoint %d: %s = %u", head->NO, head->watch_expr, head->value);
-  for (WP* cur = head; cur->next != NULL; cur = cur->next) {
+  WP *cur = head;
+  for (; cur->next != NULL; cur = cur->next) {
     Log("watchpoint %d: %s = %u", cur->NO, cur->watch_expr, cur->value);
   }
+  Log("watchpoint %d: %s = %u", cur->NO, cur->watch_expr, cur->value);
 }
 
 void delete_by_NO(int num) {
