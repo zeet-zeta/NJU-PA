@@ -98,10 +98,7 @@ void print_all() {
     Log("no watchpoint");
     return;
   }
-  if (head->next == NULL) {
-    Log("watchpoint %d: %s = %u", head->NO, head->watch_expr, head->value);
-    return;
-  }
+  Log("watchpoint %d: %s = %u", head->NO, head->watch_expr, head->value);
   for (WP* cur = head; cur->next != NULL; cur = cur->next) {
     Log("watchpoint %d: %s = %u", cur->NO, cur->watch_expr, cur->value);
   }
