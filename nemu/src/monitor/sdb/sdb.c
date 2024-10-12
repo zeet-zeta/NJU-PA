@@ -112,7 +112,7 @@ static int cmd_x(char* args) {
   word_t expr_value = expr(strtok(NULL, " "), &success);
   if (success) {
     for (int i = 0; i < n; i++) {
-      printf("0x%.8x : 0x%.8x",expr_value + i, vaddr_read(expr_value + i, 4));
+      printf("0x%.8x : 0x%.8x\n",expr_value + i, vaddr_read(expr_value + i, 4));
     }
   } else {
     Log("invalid expr");
