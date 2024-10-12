@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/vaddr.h>
 
 static int is_batch_mode = false; //非交互
 
@@ -59,11 +60,10 @@ static int cmd_p(char *args) {
   word_t tmp = expr(args, &success);
   if (success) {
     printf("%u\n", tmp);
-    return 0;
   } else {
     printf("err\n");
-    return 0;
   }
+  return 0;
   
   //以下为随机测试代码
   // bool success;
@@ -86,9 +86,7 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char* args) {
-  if (new_wp(args) == NULL) {
-    return 0;
-  }
+  new_wp(args);
   return 0;
 }
 
@@ -98,22 +96,27 @@ static int cmd_d(char* args) {
 }
 
 static int cmd_info(char* args) {
-  if (strcmp(args, "w") == 0) {
+  if (*args == 'w') {
     print_all();
-    return 0;
-  } else if (strcmp(args, "r") == 0) {
+  } else if (*args == 'r') {
     isa_reg_display();
-    return 0;
   } else {
     Log("no such command");
-    return 0;
   }
+  return 0;
 }
 
 static int cmd_x(char* args) {
-  char* n = strtok(args, " ");
-  char* e = strtok(NULL, " ");
-  printf("%s %s", n, e);
+  int n = atoi(strtok(args, " "));
+  bool success;
+  word_t expr_value = expr(strtok(NULL, " "), &success);
+  if (success) {
+    for (int i = 0; i < n; i++) {
+      printf("%x : %x\n",expr_value + i, vaddr_read(expr_value + i, 4));
+    }
+  } else {
+    Log("invalid expr");
+  }
   return 0;
 }
 
