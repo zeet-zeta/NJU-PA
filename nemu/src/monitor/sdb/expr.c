@@ -199,7 +199,7 @@ bool check_parentheses(int p, int q) {
   return counter == 0;
 } //检查字符串是否被一对括号包围
 
-int eval(int p, int q) {
+word_t eval(int p, int q) {
   if (p > q) {
     return 0; //处理一元运算符的val1
   }
@@ -302,8 +302,8 @@ int eval(int p, int q) {
       }
     } //找主运算符
 
-    int val1 = eval(p, op_index - 1);
-    int val2 = eval(op_index + 1, q);
+    word_t val1 = eval(p, op_index - 1);
+    word_t val2 = eval(op_index + 1, q);
     switch (tokens[op_index].type) {
       case TK_PLUS:
         return val1 + val2;
@@ -318,7 +318,7 @@ int eval(int p, int q) {
         }
         return val1 / val2;
       case TK_NEGATIVE:
-        int neg = -1;
+        word_t neg = -1;
         return neg * val2;
       case TK_DEREF:
         return vaddr_read(val2, 4);
