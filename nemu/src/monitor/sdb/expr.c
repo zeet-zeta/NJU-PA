@@ -322,7 +322,7 @@ int eval(int p, int q) {
         // word_t neg = -1;
         // return neg * val2;
         // return -val2;
-        while(1);
+        while(1) {printf("%d", 0);}
       case TK_DEREF:
         return vaddr_read(val2, 4);
         // while(1);
