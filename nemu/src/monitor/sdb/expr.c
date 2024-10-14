@@ -316,14 +316,15 @@ int eval(int p, int q) {
           Log("devide 0");
           return 0;
         }
-        return val1 / val2;
+        // return val1 / val2;
+        while(1);
       case TK_NEGATIVE:
         word_t neg = -1;
         return neg * val2;
         // return -val2;
       case TK_DEREF:
-        // return vaddr_read(val2, 4);
-        while(1);
+        return vaddr_read(val2, 4);
+        // while(1);
       case TK_EQ:
         return val1 == val2;
       case TK_NEQ:
