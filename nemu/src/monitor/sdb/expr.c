@@ -322,7 +322,7 @@ int eval(int p, int q) {
         // return neg * val2;
         return -val2;
       case TK_DEREF:
-        return vaddr_read(val2, 4);
+        return vaddr_read(val2, 1);
       case TK_EQ:
         return val1 == val2;
       case TK_NEQ:
