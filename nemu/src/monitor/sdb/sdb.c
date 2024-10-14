@@ -74,10 +74,15 @@ static int cmd_p(char *args) {
   FILE *file = fopen("/home/zeet/ics2024/input", "r");
   char line[10000];
   while (fgets(line, sizeof(line), file)) {
-    char *token = strtok(line, " ");
-    unsigned int expected_result = atoi(token);
+    // char *token = strtok(line, " ");
+    // unsigned int expected_result = atoi(token);
 
-    char *expression = strtok(NULL, " \n");
+    // char *expression = strtok(NULL, " \n");
+    char* space_pos = strchr(line, ' ');
+    *space_pos = '\0';
+    char* token = space_pos;
+    unsigned int expected_result = atoi(token);
+    char* expression = space_pos + 1;
     Log("%s %s", token, expression);
     unsigned int actual_result = expr(expression, &success);
     if (actual_result == expected_result) {
