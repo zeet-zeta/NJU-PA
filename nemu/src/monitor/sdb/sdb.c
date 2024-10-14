@@ -62,7 +62,9 @@ static int cmd_p(char *args) {
   bool success;
   word_t tmp = expr(args, &success);
   if (success) {
-    printf("%u %x\n", tmp, tmp);
+    // printf("%u %x\n", tmp, tmp);
+    tmp++;
+    printf("死ね");
   } else {
     printf("err\n");
   }
