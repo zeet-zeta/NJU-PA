@@ -315,7 +315,6 @@ int eval(int p, int q) {
       case TK_MINUS:
         return val1 - val2;
       case TK_MULTIPLE:
-        shine();
         return val1 * val2;
       case TK_DIVIDE:
         if (val2 == 0) {
@@ -323,15 +322,10 @@ int eval(int p, int q) {
           return 0;
         }
         return val1 / val2;
-        // while(1);
       case TK_NEGATIVE:
-        // word_t neg = -1;
-        // return neg * val2;
-        // return -val2;
-        shine();
+        return -val2;
       case TK_DEREF:
         return vaddr_read(val2, 4);
-        // while(1);
       case TK_EQ:
         return val1 == val2;
       case TK_NEQ:
