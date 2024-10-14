@@ -122,7 +122,7 @@ static int cmd_x(char* args) {
 
 static int cmd_si(char *args) {
   int n;
-  if (*args == '\0') {
+  if (args == NULL) {
     n = 1;
   } else {
     n = atoi(args);
