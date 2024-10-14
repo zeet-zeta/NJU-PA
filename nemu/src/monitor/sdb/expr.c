@@ -209,7 +209,7 @@ int eval(int p, int q) {
       case TK_HEX:
         char *endptr;
         errno = 0;
-        unsigned long temp = strtoul(tokens[p].str, &endptr, tokens[p].type == TK_DEC ? 10 : 16);
+        word_t temp = strtoul(tokens[p].str, &endptr, tokens[p].type == TK_DEC ? 10 : 16);
         if (errno == ERANGE) {
           Log("exceed the ul range");
         } else if (endptr == tokens[p].str) {
@@ -217,7 +217,7 @@ int eval(int p, int q) {
         } else if (temp > __UINT32_MAX__) {
           Log("exceed the word_t range");
         } else {
-          return (word_t) temp;
+          return  temp;
         }
         break;
       case TK_REG:
