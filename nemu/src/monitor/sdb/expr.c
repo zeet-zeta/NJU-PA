@@ -204,7 +204,7 @@ bool check_parentheses(int p, int q) {
   return counter == 0;
 } //检查字符串是否被一对括号包围
 
-double eval(int p, int q) {
+int eval(int p, int q) {
   if (p > q) {
     return 0; //处理一元运算符的val1
   }
@@ -307,8 +307,8 @@ double eval(int p, int q) {
       }
     } //找主运算符
 
-    double val1 = eval(p, op_index - 1);
-    double val2 = eval(op_index + 1, q);
+    int val1 = eval(p, op_index - 1);
+    int val2 = eval(op_index + 1, q);
     switch (tokens[op_index].type) {
       case TK_PLUS:
         return val1 + val2;
