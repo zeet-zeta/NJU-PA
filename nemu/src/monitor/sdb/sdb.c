@@ -135,7 +135,7 @@ static int cmd_si(char *args) {
 
 extern void read_reg_from_file(const char*);
 static int cmd_load_reg(char *args) {
-  read_reg_from_file("~/ics2024/reg");
+  read_reg_from_file("/home/zeet/ics2024/reg");
   return 0;
 }
 
