@@ -49,3 +49,17 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   return -1;
 }
 
+void read_reg_from_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+      perror("Could not open file");
+      return;
+    }
+    for (int i = 0; i < 32; i++) {
+      if (fscanf(file, "%u", &cpu.gpr[i]) != 1) {
+        Log("read reg err");
+      }
+    }
+    fclose(file);
+}
+

@@ -133,6 +133,12 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+extern void read_reg_from_file(const char*);
+static int cmd_load_reg(char *args) {
+  read_reg_from_file("~/ics2024/reg");
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -148,7 +154,8 @@ static struct {
   {"d", "delete a watchpoint", cmd_d},
   {"info", "print all watchpoints", cmd_info},
   {"x", "scan the memory", cmd_x},
-  {"si", "step", cmd_si}
+  {"si", "step", cmd_si},
+  {"load_reg", "rt", cmd_load_reg},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
