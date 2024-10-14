@@ -62,7 +62,7 @@ static int cmd_p(char *args) {
   bool success;
   unsigned int tmp = expr(args, &success);
   if (success) {
-    printf("%u %x\n", tmp, tmp);
+    printf("%u 0x%.8x\n", tmp, tmp);
   } else {
     printf("err\n");
   }
