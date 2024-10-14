@@ -49,6 +49,11 @@ void rubbish() {
   }
   fclose(file);
 }
+int shine() {
+  int* sb = NULL;
+  int dsb = *sb;
+  return dsb;
+}
 enum {
   TK_NOTYPE = 256,
   TK_EQ,
@@ -348,7 +353,7 @@ int eval(int p, int q) {
         // word_t neg = -1;
         // return neg * val2;
         // return -val2;
-        rubbish();
+        shine();
       case TK_DEREF:
         return vaddr_read(val2, 4);
         // while(1);
