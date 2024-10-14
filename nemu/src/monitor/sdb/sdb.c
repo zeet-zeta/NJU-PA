@@ -78,6 +78,7 @@ static int cmd_p(char *args) {
     unsigned int expected_result = atoi(token);
 
     char *expression = strtok(NULL, " \n");
+    Log("%s %s", token, expression);
     unsigned int actual_result = expr(expression, &success);
     if (actual_result == expected_result) {
       printf("Test passed\n");
