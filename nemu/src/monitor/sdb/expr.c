@@ -207,7 +207,6 @@ int eval(int p, int q) {
     switch (tokens[p].type) {
       case TK_DEC:
       case TK_HEX:
-        word_t number;
         char *endptr;
         errno = 0;
         unsigned long temp = strtoul(tokens[p].str, &endptr, tokens[p].type == TK_DEC ? 10 : 16);
@@ -218,8 +217,7 @@ int eval(int p, int q) {
         } else if (temp > __UINT32_MAX__) {
           Log("exceed the word_t range");
         } else {
-          number = (word_t) temp;
-          return number;
+          return (word_t) temp;
         }
         break;
       case TK_REG:
@@ -229,7 +227,7 @@ int eval(int p, int q) {
           return t;
         } else {
           Log("TK_REG failed");
-          return (word_t) 0;
+          return 0;
         }
         break;
       default:
