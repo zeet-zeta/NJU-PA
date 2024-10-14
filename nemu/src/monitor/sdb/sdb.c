@@ -120,6 +120,17 @@ static int cmd_x(char* args) {
   return 0;
 }
 
+static int cmd_si(char *args) {
+  int n;
+  if (*args == '\0') {
+    n = 1;
+  } else {
+    n = atoi(args);
+  }
+  cpu_exec(n);
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -134,7 +145,8 @@ static struct {
   {"w", "set a watchpoint", cmd_w},
   {"d", "delete a watchpoint", cmd_d},
   {"info", "print all watchpoints", cmd_info},
-  {"x", "scan the memory", cmd_x}
+  {"x", "scan the memory", cmd_x},
+  {"si", "step", cmd_si}
 };
 
 #define NR_CMD ARRLEN(cmd_table)
