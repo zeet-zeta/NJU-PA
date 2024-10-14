@@ -71,7 +71,7 @@ static int cmd_p(char *args) {
   //以下为随机测试代码
   read_reg_from_file("/home/zeet/ics2024/reg");
   bool success;
-  FILE *file = fopen("/home/zeet/ics2024/input_1", "r");
+  FILE *file = fopen("/home/zeet/ics2024/input", "r");
   char line[10000];
   while (fgets(line, sizeof(line), file)) {
     // char *token = strtok(line, " ");
