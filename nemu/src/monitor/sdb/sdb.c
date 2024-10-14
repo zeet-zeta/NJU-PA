@@ -60,7 +60,7 @@ static int cmd_help(char *args); //帮助
 
 static int cmd_p(char *args) {
   bool success;
-  word_t tmp = expr(args, &success);
+  unsigned int tmp = expr(args, &success);
   if (success) {
     printf("%u %x\n", tmp, tmp);
   } else {
