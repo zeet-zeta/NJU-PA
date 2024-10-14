@@ -82,8 +82,10 @@ static int cmd_p(char *args) {
     *space_pos = '\0';
     char* token = space_pos;
     unsigned int expected_result = atoi(token);
+    token = strchr(space_pos + 1, '\n');
+    *token = '\0';
     char* expression = space_pos + 1;
-    Log("%s %s", token, expression);
+    // Log("%s %s", token, expression);
     unsigned int actual_result = expr(expression, &success);
     if (actual_result == expected_result) {
       printf("Test passed\n");
