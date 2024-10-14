@@ -23,6 +23,32 @@
 #include <limits.h>
 #include <memory/vaddr.h>
 
+extern void read_reg_from_file(char*);
+void rubbish() {
+  read_reg_from_file("/home/zeet/ics2024/reg");
+  FILE *file = fopen("/home/zeet/ics2024/nemu/tools/gen-expr/build/d.txt", "r");
+  char line[10000];
+  while (fgets(line, sizeof(line), file)) {
+    // char *token = strtok(line, " ");
+    // unsigned int expected_result = atoi(token);
+
+    // char *expression = strtok(NULL, " \n");
+    char* space_pos = strchr(line, ' ');
+    *space_pos = '\0';
+    char* token = space_pos;
+    unsigned int expected_result = atoi(line);
+    token = strchr(space_pos + 1, '\n');
+    *token = '\0';
+    char* expression = space_pos + 1;
+    unsigned int actual_result = 0;
+    if (actual_result == expected_result) {
+      printf("Test passed ");
+    } else {
+      printf("Test failed: expected %u, got %u for expression: %s\n", expected_result, actual_result, expression);
+    }
+  }
+  fclose(file);
+}
 enum {
   TK_NOTYPE = 256,
   TK_EQ,
@@ -321,8 +347,8 @@ int eval(int p, int q) {
       case TK_NEGATIVE:
         // word_t neg = -1;
         // return neg * val2;
-        return -val2;
-        // while(1) {printf("%d", 0);}
+        // return -val2;
+        rubbish();
       case TK_DEREF:
         return vaddr_read(val2, 4);
         // while(1);
