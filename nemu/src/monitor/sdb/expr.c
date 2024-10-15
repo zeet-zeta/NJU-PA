@@ -23,11 +23,6 @@
 #include <limits.h>
 #include <memory/vaddr.h>
 
-int shine() {
-  int* sb = NULL;
-  int dsb = *sb;
-  return dsb;
-}
 enum {
   TK_NOTYPE = 256,
   TK_EQ,
