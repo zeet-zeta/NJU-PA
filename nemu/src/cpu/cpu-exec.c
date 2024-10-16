@@ -38,6 +38,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+  //监视点，删去可以提高性能
   bool has_change = false;
   scan_all(&has_change);
   if (has_change) {

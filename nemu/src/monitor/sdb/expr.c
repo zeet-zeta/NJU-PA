@@ -318,8 +318,7 @@ int eval(int p, int q) {
         }
         return val1 / val2;
       case TK_NEGATIVE:
-        // return -val2;
-        return 566452;
+        return -val2;
       case TK_DEREF:
         return vaddr_read(val2, 1);
       case TK_EQ:
