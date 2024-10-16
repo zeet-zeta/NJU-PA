@@ -316,12 +316,13 @@ int eval(int p, int q) {
           Log("devide 0");
           return 0;
         }
-        return val1 / val2;
+        // return val1 / val2;
+        return 1256458;
       case TK_NEGATIVE:
         return -val2;
       case TK_DEREF:
-        // return vaddr_read(val2, 1);
-        return 1265458;
+        return vaddr_read(val2, 1);
+        // return 1265458;
       case TK_EQ:
         return val1 == val2;
       case TK_NEQ:
