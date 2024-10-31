@@ -27,10 +27,12 @@ typedef struct Decode {
 } Decode;
 
 // --- pattern matching mechanism ---
-__attribute__((always_inline))
+__attribute__((always_inline)) //总是内联，提高效率
 static inline void pattern_decode(const char *str, int len,
     uint64_t *key, uint64_t *mask, uint64_t *shift) {
   uint64_t __key = 0, __mask = 0, __shift = 0;
+  //下面的宏，key最终生成匹配上的0和1，mask最终生成匹配上的?，对应0
+  //shift为当前连续?的个数，否则归零
 #define macro(i) \
   if ((i) >= len) goto finish; \
   else { \
