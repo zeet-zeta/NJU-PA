@@ -1,5 +1,5 @@
 #include <common.h>
-#define MAX_RING_BUF 2
+#define MAX_RING_BUF 10
 
 typedef struct {
     uint32_t pc;
@@ -31,5 +31,5 @@ void itrace_display() {
         disassemble(p, longbuf + sizeof(longbuf) - p, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
         puts(longbuf);
     } while ((i = (i + 1) % MAX_RING_BUF) != end);
-    printf("=======================================\n");
+    printf("======================================\n");
 }
