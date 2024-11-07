@@ -23,13 +23,13 @@ void itrace_display() {
     if (!cur && !full) return;
     int i = full ? cur : 0;
     int end = cur;
-    printf("===== the nearest %d instructions =====", MAX_RING_BUF);
+    printf("===== the nearest %d instructions =====\n", MAX_RING_BUF);
     char longbuf[128];
     do {
         char *p = longbuf;
-        p += snprintf(p, sizeof(longbuf), FMT_WORD ": %08x", iringbuf[i].pc, iringbuf[i].inst);
+        p += snprintf(p, sizeof(longbuf), FMT_WORD ": %08x ", iringbuf[i].pc, iringbuf[i].inst);
         disassemble(p, longbuf + sizeof(longbuf) - p, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
         puts(longbuf);
     } while ((i = (i + 1) % MAX_RING_BUF) != end);
-    printf("=======================================");
+    printf("=======================================\n");
 }
