@@ -130,6 +130,7 @@ void init_elf(char *elffile) {
 void ftrace_display() {
     const char *type[] = {"call", "ret"};
     FtraceNode *cur = head;
+    printf("HELLO %s", cur->func.name);
     while(cur != NULL) {
         printf("0x%x  %s  [0x%x@%s]\n", cur->pc, type[cur->type], 
             cur->func.address, cur->func.name);
