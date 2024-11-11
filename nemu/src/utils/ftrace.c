@@ -64,7 +64,7 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
     }
     for (i = 0; i < symtab->sh_size / sizeof(Elf32_Sym); i++) {
         if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) { 
-            strcpy(&strtab_data[symbols[i].st_name], function_table[function_ctr].name);
+            strcpy(function_table[function_ctr].name, &strtab_data[symbols[i].st_name]);
             function_table[function_ctr].size = symbols[i].st_size;
             function_table[function_ctr].address = symbols[i].st_value;
             function_ctr++;
