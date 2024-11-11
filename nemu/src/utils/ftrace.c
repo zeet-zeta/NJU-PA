@@ -62,7 +62,7 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
     if (read_ret < 0) {
         Log("read err");
     }
-
+    printf("HHHHHHHHHHHHHHHHHHHHGG");
     for (i = 0; i < symtab->sh_size / sizeof(Elf32_Sym); i++) {
         if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) { 
             function_table[function_ctr].name = &strtab_data[symbols[i].st_name];
