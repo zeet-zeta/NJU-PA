@@ -11,7 +11,7 @@
 #define FUNCTION_MAX_NUM 200
 
 typedef struct {
-    char *name;
+    char name[128];
     Elf32_Addr address;
     Elf32_Word size;
 } FunctionInfo;
@@ -64,7 +64,7 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
     }
     for (i = 0; i < symtab->sh_size / sizeof(Elf32_Sym); i++) {
         if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) { 
-            function_table[function_ctr].name = &strtab_data[symbols[i].st_name];
+            strcpy(&strtab_data[symbols[i].st_name], function_table[function_ctr].name);
             function_table[function_ctr].size = symbols[i].st_size;
             function_table[function_ctr].address = symbols[i].st_value;
             function_ctr++;
@@ -130,7 +130,6 @@ void init_elf(char *elffile) {
 void ftrace_display() {
     const char *type[] = {"call", "ret"};
     FtraceNode *cur = head;
-    printf("HELLO %s", cur->func.name);
     while(cur != NULL) {
         printf("0x%x  %s  [0x%x@%s]\n", cur->pc, type[cur->type], 
             cur->func.address, cur->func.name);
