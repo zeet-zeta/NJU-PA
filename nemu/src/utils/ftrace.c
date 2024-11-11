@@ -79,8 +79,10 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
 
 int get_function_index(uint32_t addr) {
     for (int i = 0; i < function_ctr; i++) {
-        if (addr >= function_table[i].address && addr < function_table[i].address + function_table[i].size)
+        if (addr >= function_table[i].address && addr < function_table[i].address + function_table[i].size) {
+            printf("hh %d", i);
             return i;
+        }
     }
     return -1;
 }
@@ -93,7 +95,6 @@ void append(uint32_t pc, uint32_t dst, int type) {
     if (head == NULL) {
         head = new_node;
         tail = new_node;
-        printf("hh %x", head->pc);
     } else {
         tail->next = new_node;
         tail = new_node;
