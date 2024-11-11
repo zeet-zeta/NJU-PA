@@ -133,9 +133,9 @@ void ftrace_display() {
     FtraceNode *cur = head;
     while(cur != NULL) {
         printf("0x%x: ", cur->pc);
-        if (cur->type == TYPE_CALL) depth++;
-        else depth--;
+        if (cur->type == TYPE_RET) depth--;
         for (int i = 0; i < depth * 2; i++) putchar(' ');
+        if (cur->type == TYPE_CALL) depth++;
         printf("%s [%s@0x%x]\n",  type[cur->type], cur->func.name, cur->func.address);
         cur = cur->next;
     }
