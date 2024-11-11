@@ -6,9 +6,9 @@ typedef struct {
     uint32_t inst;
 } ItraceNode;
 
-ItraceNode iringbuf[MAX_RING_BUF];
-int cur = 0;
-bool full = false;
+static ItraceNode iringbuf[MAX_RING_BUF];
+static int cur = 0;
+static bool full = false;
 
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
