@@ -136,5 +136,7 @@ void ftrace_display() {
         for (int i = 0; i < depth * 2; i++) putchar(' ');
         printf("%s [%s@0x%x]\n",  type[cur->type], cur->func.name, cur->func.address);
         cur = cur->next;
+        if (cur->type == TYPE_CALL) depth++;
+        else depth--;
     }
 }
