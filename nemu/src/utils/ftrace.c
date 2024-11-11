@@ -71,7 +71,9 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
             function_ctr++;
         }
     }
-
+    for (int i = 0; i < function_ctr; i++) {
+        printf("%s %x %d", function_table[i].name, function_table[i].address, function_table[i].size);
+    }
     free(symbols);
     free(strtab_data);
     free(shdr);
