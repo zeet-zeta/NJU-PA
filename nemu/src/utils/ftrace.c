@@ -66,7 +66,7 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
     for (i = 0; i < symtab->sh_size / sizeof(Elf32_Sym); i++) {
         if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) { 
             function_table[function_ctr].name = &strtab_data[symbols[i].st_name];
-            function_table[function_ctr].address = symbols[i].st_size;
+            function_table[function_ctr].size = symbols[i].st_size;
             function_table[function_ctr].address = symbols[i].st_value;
             function_ctr++;
         }
@@ -80,7 +80,6 @@ void parse_symbol_table(int fd, Elf32_Ehdr *ehdr) {
 int get_function_index(uint32_t addr) {
     for (int i = 0; i < function_ctr; i++) {
         if (addr >= function_table[i].address && addr < function_table[i].address + function_table[i].size) {
-            printf("hh %d", i);
             return i;
         }
     }
