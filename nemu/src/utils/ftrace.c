@@ -8,7 +8,7 @@
 
 #define TYPE_CALL 0
 #define TYPE_RET 1
-#define FUNCTION_MAX_NUM 200
+#define MAX_FUNCTION_NUM 200
 
 typedef struct {
     char name[128];
@@ -24,7 +24,7 @@ typedef struct node {
 } FtraceNode;
 
 static int function_ctr = 0;
-static FunctionInfo function_table[FUNCTION_MAX_NUM];
+static FunctionInfo function_table[MAX_FUNCTION_NUM];
 static FtraceNode *head = NULL;
 static FtraceNode *tail = NULL;
 
