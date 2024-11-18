@@ -140,8 +140,6 @@ static int cmd_si(char *args) {
     n = atoi(args);
   }
   cpu_exec(n);
-  void itrace_display();
-  itrace_display();
   return 0;
 }
 

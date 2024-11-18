@@ -1,5 +1,5 @@
 #include <common.h>
-#define MAX_RING_BUF 3
+#define MAX_RING_BUF 9
 
 typedef struct {
     uint32_t pc;
