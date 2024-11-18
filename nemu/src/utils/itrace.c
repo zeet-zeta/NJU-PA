@@ -25,6 +25,7 @@ void itrace_display() {
     if (cur == 0 && !is_full) return;
     char longbuf[128];
     for (int i = is_full ? cur : 0; (i + 1) % MAX_RING_BUF != cur; i = (i + 1) % MAX_RING_BUF) {
+        printf("i=%d", i);
         char *p = longbuf;
         p += snprintf(p, sizeof(longbuf), FMT_WORD ": %08x ", iringbuf[i].pc, iringbuf[i].inst);
         disassemble(p, longbuf + sizeof(longbuf) - p, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
