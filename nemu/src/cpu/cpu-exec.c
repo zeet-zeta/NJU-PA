@@ -93,8 +93,8 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
   void ftrace_display();
   IFDEF(CONFIG_FTRACE, ftrace_display());
-  void itrace_display();
-  itrace_display();
+  // void itrace_display();
+  // itrace_display();
   isa_reg_display();
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
