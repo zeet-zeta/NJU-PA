@@ -28,7 +28,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   //   return false;
   // }
   // return true;
-  if (cpu.pc == 0x80000004) return false;
+  if (cpu.pc == 0x8000000c) return false;
   else return true; 
 }
 
