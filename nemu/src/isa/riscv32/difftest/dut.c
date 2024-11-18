@@ -28,7 +28,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   //   return false;
   // }
   // return true;
-  static int counter = 0; 
+  static int counter = 1; 
   if (counter == 1) return false;
   else return true;
   counter++;
