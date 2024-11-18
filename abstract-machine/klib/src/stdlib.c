@@ -1,7 +1,6 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
-#include <stdint.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
@@ -30,24 +29,30 @@ int atoi(const char* nptr) {
   return x;
 }
 
+extern Area heap;
+static bool first_malloc = true;
+static void *addr = NULL;
 void *malloc(size_t size) {
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  static uint8_t *p = NULL;
-  if (p == NULL) p = heap.start;
-  if (p > (uint8_t *)heap.end || size > (uint8_t *)heap.end - p) return NULL;
-  void *ret = p;
-  p += size;
-  p = (uint8_t *)(((uintptr_t)p + 7) & ~((uintptr_t)7));
-  return ret;
-
+  //panic("Not implemented");
+  if(first_malloc)
+    {
+      addr = heap.start;
+      first_malloc = false;
+    }
+  if(size == 0) return NULL; //size == 0, let malloc return NULL pointer
+  void *alloced_mem = addr; //else malloc the memory
+  addr = (void *)ROUNDUP((uintptr_t)addr + (uintptr_t)size, 8);
+  return alloced_mem;
 #endif
   return NULL;
 }
 
 void free(void *ptr) {
+  //Current we needn't implement it
 }
 
 #endif
