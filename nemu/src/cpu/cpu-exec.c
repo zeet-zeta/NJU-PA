@@ -40,12 +40,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
   //监视点，删去可以提高性能
-  // bool has_change = false;
-  // scan_all(&has_change);
-  // if (has_change) {
-  //   nemu_state.state = NEMU_STOP;
-  //   Log("trigger watchpoint");
-  // }
+  bool has_change = false;
+  scan_all(&has_change);
+  if (has_change) {
+    nemu_state.state = NEMU_STOP;
+    Log("trigger watchpoint");
+  }
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
