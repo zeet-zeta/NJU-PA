@@ -105,7 +105,9 @@ static void statistic() {
 void assert_fail_msg() {
   void itrace_display();
   itrace_display();
+  Log("before");
   isa_reg_display();
+  Log("after");
   statistic();
 }
 
