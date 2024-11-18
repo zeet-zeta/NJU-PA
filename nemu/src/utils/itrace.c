@@ -1,4 +1,3 @@
-#ifdef CONFIG_ITRACE
 #include <common.h>
 #define MAX_RING_BUF 9
 
@@ -34,4 +33,3 @@ void itrace_display() {
         i = (i + 1) % MAX_RING_BUF;
     } while (i != cur);
 }
-#endif
