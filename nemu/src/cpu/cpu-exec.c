@@ -103,8 +103,8 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  // void itrace_display();
-  // itrace_display();
+  void itrace_display();
+  itrace_display();
   isa_reg_display();
   statistic();
 }
