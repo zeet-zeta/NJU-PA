@@ -40,12 +40,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
   //监视点，删去可以提高性能
-  // bool has_change = false;
-  // scan_all(&has_change);
-  // if (has_change) {
-  //   nemu_state.state = NEMU_STOP;
-  //   Log("trigger watchpoint");
-  // }
+  bool has_change = false;
+  scan_all(&has_change);
+  if (has_change) {
+    nemu_state.state = NEMU_STOP;
+    Log("trigger watchpoint");
+  }
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -93,9 +93,9 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
   void ftrace_display();
   IFDEF(CONFIG_FTRACE, ftrace_display());
-  // void itrace_display();
-  // itrace_display();
-  // isa_reg_display();
+  void itrace_display();
+  itrace_display();
+  isa_reg_display();
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
