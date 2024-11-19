@@ -91,8 +91,8 @@ static void execute(uint64_t n) {
 
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
-  void ftrace_display();
-  IFDEF(CONFIG_FTRACE, ftrace_display());
+  // void ftrace_display();
+  // IFDEF(CONFIG_FTRACE, ftrace_display());
   // void itrace_display();
   // itrace_display();
   isa_reg_display();
