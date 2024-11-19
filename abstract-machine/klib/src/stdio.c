@@ -27,6 +27,25 @@ int my_itoa(int value, char *str) {
     return count;
 }
 
+int my_itoa_hex(int value, char *str) {
+    int count = 0;
+    char hex_chars[] = "0123456789abcdef";
+    if (value == 0) {
+        str[count++] = '0';
+    } else {
+        while (value != 0) {
+            str[count++] = hex_chars[value % 16];
+            value /= 16;
+        }
+    }
+    for (int i = 0; i < count / 2; i++) {
+        char tmp = str[i];
+        str[i] = str[count - i - 1];
+        str[count - i - 1] = tmp;
+    }
+    return count;
+}
+
 int printf(const char *fmt, ...) {
   char buffer[4096];
   va_list ap;
@@ -79,6 +98,11 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           if (count < n - 1) {
             out[count++] = ch;
           }
+          break;
+        }
+        case 'x': {
+          int num = va_arg(ap, int);
+          count += my_itoa_hex(num, out + count);
           break;
         }
       }
