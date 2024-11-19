@@ -12,6 +12,10 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
     .width = 0, .height = 0,
     .vmemsz = 0
   };
+  uint32_t temp = inl(VGACTL_ADDR);
+  cfg->width = (int)(temp >> 16);
+  cfg->height = (int)(temp & 0x00ff);
+  cfg->vmemsz = cfg->width * cfg->height * 32;
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
