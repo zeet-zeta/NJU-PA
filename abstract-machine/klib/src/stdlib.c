@@ -44,7 +44,12 @@ void *malloc(size_t size) {
   if (addr + size > heap.end) {
     return NULL;
   }
-  void *ptr = addr + size;
+
+  // void *ptr = addr + size;
+
+  void *ptr = addr;
+  addr += size;
+
   uintptr_t aligned_ptr = (uintptr_t)ptr;
   if (aligned_ptr % 8 != 0) {
     aligned_ptr += (8 - (aligned_ptr % 8));
