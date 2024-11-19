@@ -20,16 +20,16 @@ void itrace_add(uint32_t pc, uint32_t inst) {
     }
 }
 
-void itrace_display() {
-    void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-    if (cur == 0 && !is_full) return;
-    char longbuf[128];
-    int i = is_full ? cur : 0;
-    do {
-        char *p = longbuf;
-        p += snprintf(p, sizeof(longbuf), FMT_WORD ": %08x ", iringbuf[i].pc, iringbuf[i].inst);
-        disassemble(p, longbuf + sizeof(longbuf) - p, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
-        puts(longbuf);
-        i = (i + 1) % MAX_RING_BUF;
-    } while (i != cur);
-}
+// void itrace_display() {
+//     void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+//     if (cur == 0 && !is_full) return;
+//     char longbuf[128];
+//     int i = is_full ? cur : 0;
+//     do {
+//         char *p = longbuf;
+//         p += snprintf(p, sizeof(longbuf), FMT_WORD ": %08x ", iringbuf[i].pc, iringbuf[i].inst);
+//         disassemble(p, longbuf + sizeof(longbuf) - p, iringbuf[i].pc, (uint8_t *)&iringbuf[i].inst, 4);
+//         puts(longbuf);
+//         i = (i + 1) % MAX_RING_BUF;
+//     } while (i != cur);
+// }
