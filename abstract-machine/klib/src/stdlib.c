@@ -43,7 +43,11 @@ void *malloc(size_t size) {
   }
   void *ptr = addr;
   addr += size;
-  return ptr;
+  uintptr_t aligned_ptr = (uintptr_t)ptr;
+  if (aligned_ptr % 8 != 0) {
+    aligned_ptr += (8 - (aligned_ptr % 8));
+  }
+  return (void *)aligned_ptr;
 }
 
 void free(void *ptr) {

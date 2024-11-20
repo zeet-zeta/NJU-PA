@@ -89,11 +89,31 @@ void *memmove(void *dst, const void *src, size_t n) {
   return dst;
 }
 
+// void *memcpy(void *out, const void *in, size_t n) {
+//     char* d = (char*) out;
+//     const char* s = (const char*) in;
+//     while (n--)
+//       *d++ = *s++;
+//     return out;
+// }
+//优化memcpy
 void *memcpy(void *out, const void *in, size_t n) {
-    char* d = (char*) out;
-    const char* s = (const char*) in;
-    while (n--)
-      *d++ = *s++;
+    if (n == 0) return NULL;
+    char *d = (char *)out;
+    const char *s = (const char *)in;
+
+    while (((uintptr_t)s % 8 != 0) && (n > 0)) {
+        *d++ = *s++;
+        n--;
+    }
+    for (; n >= 8; n -= 8) {
+        *(long long *)d = *(long long *)s;
+        d += 8;
+        s += 8;
+    }
+    while (n--) {
+        *d++ = *s++;
+    }
     return out;
 }
 
