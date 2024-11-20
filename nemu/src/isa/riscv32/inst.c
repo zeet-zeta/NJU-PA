@@ -64,7 +64,7 @@ static int decode_exec(Decode *s) {
   decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type)); \
   __VA_ARGS__ ; \
 } // __VA_ARGS__是一个特殊的宏，可作为语句执行
-//根据指令的
+//根据汇编的常见次序进行排序
 
   INSTPAT_START();
 
