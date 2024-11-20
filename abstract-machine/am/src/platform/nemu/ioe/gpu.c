@@ -14,7 +14,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   };
   uint32_t temp = inl(VGACTL_ADDR);
   cfg->width = (int)(temp >> 16);
-  cfg->height = (int)(temp & 0x00ff);
+  cfg->height = (int)(temp & 0xffff);
   cfg->vmemsz = cfg->width * cfg->height * 32;
 }
 
