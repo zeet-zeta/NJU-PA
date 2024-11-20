@@ -54,7 +54,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   }
 }
 
-static inline int decode_exec(Decode *s) {
+static int decode_exec(Decode *s) {
   int rd = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
   s->dnpc = s->snpc;
@@ -67,7 +67,6 @@ static inline int decode_exec(Decode *s) {
 //根据汇编的常见次序进行排序
 
   INSTPAT_START();
-  
 
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi   , I, R(rd) = src1 + imm);
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, R(rd) = s->pc + imm);
