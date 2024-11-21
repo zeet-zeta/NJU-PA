@@ -189,6 +189,7 @@ static int decode_exec(Decode *s) {
         R(rd) = s->snpc, s->dnpc = s->pc + imm; IFDEF(CONFIG_FTRACE, ftrace_jal(rd, s->pc, s->dnpc)); BREAK;
       case 0x73:
         NEMUTRAP(s->pc, R(10)); BREAK;
+      Assert(0, "INVALID INST");
     }
 
 
