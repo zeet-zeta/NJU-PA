@@ -77,6 +77,7 @@ static int decode_exec(Decode *s) {
   // printf("OPCODE=%x", OPCODE);
   switch (OPCODE) {
     case 0x33: // R
+      printf("%08x\n", cur_inst);
       decode_operand(s, &rd, &src1, &src2, &imm, TYPE_R);
       switch (FUNC3) {
         case 0x0: 
@@ -95,6 +96,7 @@ static int decode_exec(Decode *s) {
           }
         case 0x6000: R(rd) = src1 | src2; BREAK;
         case 0x7000: R(rd) = src1 & src2; BREAK;
+        Log("REACH R END");
       }
       // INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, );
       // INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, );
