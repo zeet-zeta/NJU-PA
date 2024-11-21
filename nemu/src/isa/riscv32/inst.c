@@ -156,7 +156,7 @@ static int decode_exec(Decode *s) {
     case 0x3: //I
       decode_operand(s, &rd, &src1, &src2, &imm, TYPE_I);
       switch (FUNC3) {
-        case 0x0: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 1)) << 24 >> 24; BREAK;
+        case 0x0: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 1) << 24 >> 24); BREAK;
         case 0x1000: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 2) << 16 >> 16); BREAK;
         case 0x2000: R(rd) = Mr(src1 + imm, 4); BREAK;
         case 0x4000: R(rd) = Mr(src1 + imm, 1); BREAK;
