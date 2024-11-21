@@ -92,16 +92,16 @@ static int decode_exec(Decode *s) {
 
 #define BREAK R(0) = 0; return 0
 
-// #define FUNC3 (i >> 12 & 0x7)
-// #define FUNC7 (i >> 25 & 0xef)
+#define FUNC3 ((i >> 12) & 0x7)
+#define FUNC7 ((i >> 25) & 0xef)
 
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15); //寄存器1
   int rs2 = BITS(i, 24, 20); //寄存器2
   rd = BITS(i, 11, 7); //目标寄存器
   char opcode = opcode_table[i & 0x7f];
-  int FUNC3 = (i >> 12) & 0x7;
-  int FUNC7 = (i >> 25) & 0xef;
+  // int FUNC3 = (i >> 12) & 0x7;
+  // int FUNC7 = (i >> 25) & 0xef;
 
   switch (opcode) {
     case 0: //R
