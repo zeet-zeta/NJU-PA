@@ -20,7 +20,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  int x = ctl->x;
+  // int x = ctl->x;
   int y = ctl->y;
   int w = ctl->w;
   int h = ctl->h;
@@ -34,7 +34,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   // }
   for (int j = y; j < y + h; j++) {
     int fb_base = t * j;
-    int pixel_base = (j - y) * w - x;
+    int pixel_base = (j - y) * w;
     memcpy(&fb[fb_base], &pixels[pixel_base], w * sizeof(uint32_t));
   }
   if (ctl->sync) {
