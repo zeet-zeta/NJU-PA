@@ -63,7 +63,7 @@ void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
 //     case TYPE_R: src1R(); src2R();       ; break;
 //   }
 // }
-static int opcode_table[0x7f] = {0};
+static char opcode_table[0x7f] = {0};
 
 void initialize_opcode_table() {
   opcode_table[0x33] = 0;
