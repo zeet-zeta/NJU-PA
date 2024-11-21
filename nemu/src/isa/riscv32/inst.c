@@ -22,11 +22,11 @@
 #define Mr vaddr_read
 #define Mw vaddr_write
 
-enum {
-  TYPE_I, TYPE_U, TYPE_S,
-  TYPE_B, TYPE_J, TYPE_R,
-  TYPE_N, // none
-};
+// enum {
+//   TYPE_I, TYPE_U, TYPE_S,
+//   TYPE_B, TYPE_J, TYPE_R,
+//   TYPE_N, // none
+// };
 
 #define src1R() do { src1 = R(rs1); } while (0) //do {} while (0)用于防止这个宏在其他控制语句中被错误执行，将rs1对应寄存器的值赋给src1指向的位置
 #define src2R() do { src2 = R(rs2); } while (0)
@@ -195,7 +195,7 @@ static int decode_exec(Decode *s) {
   }
   INSTPAT_END();
 
-  R(0) = 0; // reset $zero to 0
+  // R(0) = 0; // reset $zero to 0
 
   return 0;
 }
