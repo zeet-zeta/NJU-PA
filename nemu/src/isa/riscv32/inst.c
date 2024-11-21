@@ -63,21 +63,6 @@ void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
 //     case TYPE_R: src1R(); src2R();       ; break;
 //   }
 // }
-char opcode_table[0x7f] = {0};
-
-void initialize_opcode_table() {
-  opcode_table[0x33] = 0;
-  opcode_table[0x17] = 1;
-  opcode_table[0x37] = 2;
-  opcode_table[0x13] = 3;
-  opcode_table[0x03] = 4;
-  opcode_table[0x67] = 5;
-  opcode_table[0x23] = 6;
-  opcode_table[0x63] = 7;
-  opcode_table[0x6f] = 8;
-  opcode_table[0x73] = 9;
-}
-
 
 static int decode_exec(Decode *s) {
   int rd = 0;
@@ -92,6 +77,7 @@ static int decode_exec(Decode *s) {
 
 #define BREAK R(0) = 0; return 0
 
+#define OPCODE (i & 0x7f)
 #define FUNC3 ((i >> 12) & 0x7)
 #define FUNC7 ((i >> 25) & 0xef)
 
@@ -102,8 +88,8 @@ static int decode_exec(Decode *s) {
   // int FUNC3 = (i >> 12) & 0x7;
   // int FUNC7 = (i >> 25) & 0xef;
 
-  switch (opcode_table[i & 0x7f]) {
-    case 0: //R
+  switch (OPCODE) {
+    case 0x33: //R
       src1R(); src2R();
       switch (FUNC3) {
         case 0x0: 
@@ -153,13 +139,13 @@ static int decode_exec(Decode *s) {
             case 0x1: R(rd) = src1 % src2; BREAK;
           }  
       }
-    case 1: //U
+    case 0x17: //U
       immU();
       R(rd) = s->pc + imm; BREAK;
-    case 2: //U
+    case 0x37: //U
       immU();
       R(rd) = imm; BREAK;
-    case 3: //I
+    case 0x13: //I
       immI(); src1R();
       switch (FUNC3) {
         case 0x0: R(rd) = src1 + imm; BREAK;
@@ -178,7 +164,7 @@ static int decode_exec(Decode *s) {
         case 0x6: R(rd) = src1 | imm; BREAK;
         case 0x7: R(rd) = src1 & imm; BREAK;
       }
-    case 4: //I
+    case 0x3: //I
       immI(); src1R();
       switch (FUNC3) {
         case 0x0: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 1) << 24 >> 24); BREAK;
@@ -187,19 +173,19 @@ static int decode_exec(Decode *s) {
         case 0x4: R(rd) = Mr(src1 + imm, 1); BREAK;
         case 0x5: R(rd) = Mr(src1 + imm, 2); BREAK;
       }
-    case 5: //I
+    case 0x67: //I
       immI(); src1R();
       switch (FUNC3) {
         case 0x0: R(rd) = s->snpc, s-> dnpc = src1 + imm; IFDEF(CONFIG_FTRACE, ftrace_jalr(rd, s->pc, s->dnpc, s->isa.inst.val)); BREAK;
       }
-    case 6: //S
+    case 0x23: //S
       immS(); src1R(); src2R();
       switch (FUNC3) {
         case 0x0: Mw(src1 + imm, 1, src2); BREAK;
         case 0x1: Mw(src1 + imm, 2, src2); BREAK;
         case 0x2: Mw(src1 + imm, 4, src2); BREAK;
       }
-    case 7: //B
+    case 0x63: //B
       immB(); src1R(); src2R();
       switch (FUNC3) {
         case 0x0: s->dnpc = src1 == src2 ? s->pc + imm : s->dnpc; BREAK;
@@ -209,10 +195,10 @@ static int decode_exec(Decode *s) {
         case 0x6: s->dnpc = src1 < src2 ? s->pc + imm : s->dnpc; BREAK;
         case 0x7: s->dnpc = src1 >= src2 ? s->pc + imm : s->dnpc; BREAK;
       }
-    case 8: //J
+    case 0x6f: //J
       immJ();
       R(rd) = s->snpc, s->dnpc = s->pc + imm; IFDEF(CONFIG_FTRACE, ftrace_jal(rd, s->pc, s->dnpc)); BREAK;
-    case 9: //ebreak
+    case 0x73: //ebreak
       NEMUTRAP(s->pc, R(10)); BREAK;
     Assert(0, "INVALID INST");
   }
