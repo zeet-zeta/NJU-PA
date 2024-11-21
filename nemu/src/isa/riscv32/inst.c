@@ -80,12 +80,14 @@ static int decode_exec(Decode *s) {
 #define FUNC3 (i >> 12 & 0x7)
 #define FUNC7 (i >> 25 & 0xef)
 
+// int [0x7f]
+
 
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15); //寄存器1
   int rs2 = BITS(i, 24, 20); //寄存器2
   rd = BITS(i, 11, 7); //目标寄存器
-  uint32_t opcode = i & 0x07f;
+  uint32_t opcode = i & 0x7f;
 
   switch (opcode) {
     case 0x33: // R
