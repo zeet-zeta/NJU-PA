@@ -95,7 +95,6 @@ static int decode_exec(Decode *s) {
           }
         case 0x6000: R(rd) = src1 | src2; BREAK;
         case 0x7000: R(rd) = src1 & src2; BREAK;
-        default: Assert(0, "can't match r");
       }
       // INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, );
       // INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, );
