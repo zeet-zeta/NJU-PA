@@ -1,5 +1,6 @@
 #include <am.h>
 #include <nemu.h>
+#include <klib.h>
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
@@ -15,7 +16,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   uint32_t temp = inl(VGACTL_ADDR);
   cfg->width = (int)(temp >> 16);
   cfg->height = (int)(temp & 0xffff);
-  cfg->vmemsz = cfg->width * cfg->height * 32;
+  cfg->vmemsz = cfg->width * cfg->height << 5;
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
@@ -26,10 +27,15 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   uint32_t *pixels = ctl->pixels;
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   int t = (int)(inl(VGACTL_ADDR) >> 16);
+  // for (int j = y; j < y + h; j++) {
+  //   for (int i = x; i < x + w; i++) {
+  //     fb[t * j + i] = pixels[w * (j - y) + (i -x)];
+  //   }
+  // }
   for (int j = y; j < y + h; j++) {
-    for (int i = x; i < x + w; i++) {
-      fb[t * j + i] = pixels[w * (j - y) + (i -x)];
-    }
+    int fb_base = t * w + j * w;
+    int pixel_base = (j - y) * w;
+    memcpy(&fb[fb_base + x], &pixels[pixel_base], w << 5);
   }
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
