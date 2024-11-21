@@ -99,11 +99,10 @@ static int decode_exec(Decode *s) {
   int rs1 = BITS(i, 19, 15); //寄存器1
   int rs2 = BITS(i, 24, 20); //寄存器2
   rd = BITS(i, 11, 7); //目标寄存器
-  char opcode = opcode_table[i & 0x7f];
   // int FUNC3 = (i >> 12) & 0x7;
   // int FUNC7 = (i >> 25) & 0xef;
 
-  switch (opcode) {
+  switch (opcode_table[i & 0x7f]) {
     case 0: //R
       src1R(); src2R();
       switch (FUNC3) {
