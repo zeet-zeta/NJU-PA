@@ -191,6 +191,7 @@ static int decode_exec(Decode *s) {
         NEMUTRAP(s->pc, R(10)); BREAK;
     }
 
+
   INSTPAT_END();
 
   R(0) = 0; // reset $zero to 0
