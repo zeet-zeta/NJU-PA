@@ -12,6 +12,9 @@ extern "C" {
 // #define __NATIVE_USE_KLIB__
 
 // string.h
+// #ifdef memset
+// #error this is a macro
+// #endif
 void  *memset    (void *s, int c, size_t n);
 void  *memcpy    (void *dst, const void *src, size_t n);
 void  *memmove   (void *dst, const void *src, size_t n);
