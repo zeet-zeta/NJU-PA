@@ -35,8 +35,8 @@ void device_update();
 static inline void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
-#endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+#endif
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
   //监视点，删去可以提高性能
