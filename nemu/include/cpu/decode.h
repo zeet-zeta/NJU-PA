@@ -98,7 +98,7 @@ typedef struct Decode {
 //   } 反斜杠
 // } while (0)
 
-#define INSTPAT_START(name) { const void ** __instpat_end = &&concat(__instpat_end_, name);
-#define INSTPAT_END(name)   concat(__instpat_end_, name): ; }
+// #define INSTPAT_START(name) { const void ** __instpat_end = &&concat(__instpat_end_, name);
+// #define INSTPAT_END(name)   concat(__instpat_end_, name): ; }
 
 #endif

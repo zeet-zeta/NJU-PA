@@ -65,12 +65,10 @@ static int decode_exec(Decode *s) {
 //   __VA_ARGS__ ; 
 // } // __VA_ARGS__是一个特殊的宏，可作为语句执行
 
-#define BREAK goto *(__instpat_end)
+#define BREAK R(0) = 0; return 0 
 #define OPCODE (i & 0x7f)
 #define FUNC3 (i & 0x7000)
 #define FUNC7 (i & 0xfe000000)
-
-  INSTPAT_START();
 
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15); //寄存器1
@@ -193,7 +191,6 @@ static int decode_exec(Decode *s) {
       NEMUTRAP(s->pc, R(10)); BREAK;
     Assert(0, "INVALID INST");
   }
-  INSTPAT_END();
 
   R(0) = 0; // reset $zero to 0
 
