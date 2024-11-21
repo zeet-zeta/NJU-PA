@@ -65,9 +65,10 @@ void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
 //   }
 // }
 
+static int rd = 0;
+static word_t src1 = 0, src2 = 0, imm = 0;
 static int decode_exec(Decode *s) {
-  int rd = 0;
-  word_t src1 = 0, src2 = 0, imm = 0;
+
   s->dnpc = s->snpc;
 
 // #define INSTPAT_INST(s) ((s)->isa.inst.val)
