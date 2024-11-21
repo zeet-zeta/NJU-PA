@@ -40,11 +40,11 @@ inline uint64_t sign_extend(uint32_t x, int len) {
 
 #define src1R() do { src1 = R(rs1); } while (0) //do {} while (0)用于防止这个宏在其他控制语句中被错误执行，将rs1对应寄存器的值赋给src1指向的位置
 #define src2R() do { src2 = R(rs2); } while (0)
-#define immI() do { imm = SEXT(get_bits(i, 31, 20), 12); } while(0) //imm[11:0]
-#define immU() do { imm = SEXT(get_bits(i, 31, 12), 20) << 12; } while(0) // imm[31:12]后面全为0
-#define immS() do { imm = (SEXT(get_bits(i, 31, 25), 7) << 5) | get_bits(i, 11, 7); } while(0) //拼成完整的imm[11:0]
-#define immB() do { imm = (SEXT(get_bits(i, 31, 31), 1) << 12) | get_bits(i, 7, 7) << 11 | get_bits(i, 30, 25) << 5 | get_bits(i, 11, 8) << 1; } while(0) //拼成imm[12:1]
-#define immJ() do { imm = (SEXT(get_bits(i, 31, 31), 1) << 20) | get_bits(i, 19, 12) << 12 | get_bits(i, 20, 20) << 11 | get_bits(i, 30, 21) << 1;} while(0) //拼成imm[20:1]
+#define immI() do { imm = sign_extend(get_bits(i, 31, 20), 12); } while(0) //imm[11:0]
+#define immU() do { imm = sign_extend(get_bits(i, 31, 12), 20) << 12; } while(0) // imm[31:12]后面全为0
+#define immS() do { imm = (sign_extend(get_bits(i, 31, 25), 7) << 5) | get_bits(i, 11, 7); } while(0) //拼成完整的imm[11:0]
+#define immB() do { imm = (sign_extend(get_bits(i, 31, 31), 1) << 12) | get_bits(i, 7, 7) << 11 | get_bits(i, 30, 25) << 5 | get_bits(i, 11, 8) << 1; } while(0) //拼成imm[12:1]
+#define immJ() do { imm = (sign_extend(get_bits(i, 31, 31), 1) << 20) | get_bits(i, 19, 12) << 12 | get_bits(i, 20, 20) << 11 | get_bits(i, 30, 21) << 1;} while(0) //拼成imm[20:1]
 
 void ftrace_jal(int rd, uint32_t pc, uint32_t dst);
 void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
