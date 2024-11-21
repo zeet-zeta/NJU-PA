@@ -74,7 +74,7 @@ static int decode_exec(Decode *s) {
   INSTPAT_START();
 
   uint32_t cur_inst = s->isa.inst.val;
-  printf("%x\n", cur_inst);
+  // printf("%x\n", cur_inst);
   switch (OPCODE) {
     case 0x33: // R
       decode_operand(s, &rd, &src1, &src2, &imm, TYPE_R);
