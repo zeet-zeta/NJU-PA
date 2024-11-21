@@ -35,7 +35,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   for (int j = y; j < y + h; j++) {
     int fb_base = t * w + j * w;
     int pixel_base = (j - y) * w;
-    memcpy(&fb[fb_base + x], &pixels[pixel_base], w << 5);
+    memcpy(&fb[fb_base + x], &pixels[pixel_base], w * sizeof(uint32_t));
   }
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
