@@ -84,20 +84,59 @@ static int decode_exec(Decode *s) {
           switch (FUNC7) {
             case 0x0: R(rd) = src1 + src2; BREAK;
             case 0x40000000: R(rd) = src1 - src2; BREAK;
+            case 0x2000000: R(rd) = src1 * src2; BREAK;
           }
-        case 0x1000: R(rd) = src1 << (src2 & 0x1f); BREAK;
-        case 0x2000: R(rd) = (int32_t) src1 < (int32_t) src2; BREAK;
-        case 0x3000: R(rd) = src1 < src2; BREAK;
-        case 0x4000: R(rd) = src1 ^ src2; BREAK;
+        case 0x1000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = src1 << (src2 & 0x1f); BREAK;
+            case 0x2000000: R(rd) = (1ll * (int32_t) src1 * (int32_t) src2) >> 32; BREAK;
+          }
+        case 0x2000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = (int32_t) src1 < (int32_t) src2; BREAK;
+            case 0x2000000: R(rd) = (1ll * (int32_t) src1 * (uint32_t) src2) >> 32; BREAK;
+          }
+        
+        case 0x3000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = src1 < src2; BREAK;
+            case 0x2000000: R(rd) = (1ull * (uint32_t) src1 * (uint32_t) src2) >> 32; BREAK;
+          }
+        
+        case 0x4000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = src1 ^ src2; BREAK;
+            case 0x2000000: R(rd) = (int32_t) src1 / (int32_t) src2; BREAK;
+          }
+        
         case 0x5000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 >> (src2 & 0x1f); BREAK;
             case 0x40000000: R(rd) = (int32_t) src1 >> (src2 & 0x1f); BREAK;
+            case 0x2000000: R(rd) = src1 / src2; BREAK;
           }
-        case 0x6000: R(rd) = src1 | src2; BREAK;
-        case 0x7000: R(rd) = src1 & src2; BREAK;
-        Log("REACH R END");
+        case 0x6000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = src1 | src2; BREAK;
+            case 0x2000000: R(rd) = (int32_t) src1 % (int32_t) src2; BREAK; 
+          }
+        
+        case 0x7000: 
+          switch (FUNC7) {
+            case 0x0: R(rd) = src1 & src2; BREAK;
+            case 0x2000000: R(rd) = src1 % src2; BREAK;
+          }
+        
+        
       }
+  //     INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, );
+  // INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, );
+  // INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu , R, );
+  // INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu  , );
+  // INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, );
+  // INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, );
+  // INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, );
+  // INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , );
       // INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, );
       // INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, );
       // INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R, );
@@ -159,14 +198,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->snpc, s->dnpc = s->pc + imm; IFDEF(CONFIG_FTRACE, ftrace_jal(rd, s->pc, s->dnpc)));
 
   //补充乘除法
-  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(rd) = src1 * src2);
-  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, R(rd) = (1ll * (int32_t) src1 * (int32_t) src2) >> 32);
-  INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu , R, R(rd) = (1ll * (int32_t) src1 * (uint32_t) src2) >> 32);
-  INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu  , R, R(rd) = (1ull * (uint32_t) src1 * (uint32_t) src2) >> 32);
-  INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = (int32_t) src1 / (int32_t) src2);
-  INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, R(rd) = src1 / src2);
-  INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, R(rd) = (int32_t) src1 % (int32_t) src2);
-  INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, R(rd) = src1 % src2);
+  
 
   //N-type 自己定义的
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
