@@ -38,8 +38,9 @@
 //     return (x & (1 << (len - 1))) ? (x | ((1ull << (64 - len)) - 1) << len) : x;
 // }
 
-#define src1R() do { src1 = R(rs1); } while (0) //do {} while (0)用于防止这个宏在其他控制语句中被错误执行，将rs1对应寄存器的值赋给src1指向的位置
-#define src2R() do { src2 = R(rs2); } while (0)
+#define src1R() do { int rs1 = BITS(i, 19, 15); src1 = R(rs1); } while (0) //do {} while (0)用于防止这个宏在其他控制语句中被错误执行，将rs1对应寄存器的值赋给src1指向的位置
+#define src2R() do { int rs2 = BITS(i, 24, 20); src2 = R(rs2); } while (0)
+#define RD() do { rd = BITS(i, 11, 7); } while (0) //目标寄存器
 #define immI() do { imm = SEXT(BITS(i, 31, 20), 12); } while(0) //imm[11:0]
 #define immU() do { imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0) // imm[31:12]后面全为0
 #define immS() do { imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0) //拼成完整的imm[11:0]
@@ -76,28 +77,17 @@ static int decode_exec(Decode *s) {
 // } // __VA_ARGS__是一个特殊的宏，可作为语句执行
 
 #define BREAK R(0) = 0; return 0
-
 #define OPCODE (i & 0x7f)
 #define FUNC3 ((i >> 12) & 0x7)
 #define FUNC7 ((i >> 25) & 0xef)
-
   uint32_t i = s->isa.inst.val;
-  int rs1 = BITS(i, 19, 15); //寄存器1
-  int rs2 = BITS(i, 24, 20); //寄存器2
-  rd = BITS(i, 11, 7); //目标寄存器
-  // int FUNC3 = (i >> 12) & 0x7;
-  // int FUNC7 = (i >> 25) & 0xef;
-
   // switch (OPCODE) {
   int opcode = OPCODE;
     if (opcode == 0x13) {
-      immI(); src1R();
+      immI(); src1R(); RD();
       switch (FUNC3) {
         case 0x0: R(rd) = src1 + imm; BREAK;
-        case 0x1: 
-          switch (FUNC7) {
-            case 0x0: R(rd) = src1 << imm; BREAK;
-          }
+        case 0x1: R(rd) = src1 << imm; BREAK;
         case 0x2: R(rd) = (int32_t) src1 < (int32_t) imm; BREAK;
         case 0x3: R(rd) = src1 < imm; BREAK;
         case 0x4: R(rd) = src1 ^ imm; BREAK;
@@ -110,10 +100,10 @@ static int decode_exec(Decode *s) {
         case 0x7: R(rd) = src1 & imm; BREAK;
       }
     } else if (opcode == 0x17) {
-      immU();
+      immU(); RD();
       R(rd) = s->pc + imm; BREAK;
     } else if (opcode == 0x3) {
-      immI(); src1R();
+      immI(); src1R(); RD();
       switch (FUNC3) {
         case 0x0: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 1) << 24 >> 24); BREAK;
         case 0x1: R(rd) = (word_t) ((int32_t) Mr(src1 + imm, 2) << 16 >> 16); BREAK;
@@ -129,13 +119,13 @@ static int decode_exec(Decode *s) {
         case 0x2: Mw(src1 + imm, 4, src2); BREAK;
       }
     } else if (opcode == 0x37) {
-      immU();
+      immU(); RD();
       R(rd) = imm; BREAK;
     } else if (opcode == 0x6f) {
-      immJ();
+      immJ(); RD();
       R(rd) = s->snpc, s->dnpc = s->pc + imm; IFDEF(CONFIG_FTRACE, ftrace_jal(rd, s->pc, s->dnpc)); BREAK;
     } else if (opcode == 0x33) {
-      src1R(); src2R();
+      src1R(); src2R(); RD();
       switch (FUNC3) {
         case 0x0: 
           switch (FUNC7) {
@@ -195,10 +185,8 @@ static int decode_exec(Decode *s) {
         case 0x7: s->dnpc = src1 >= src2 ? s->pc + imm : s->dnpc; BREAK;
       }
     } else if (opcode == 0x67) {
-      immI(); src1R();
-      switch (FUNC3) {
-        case 0x0: R(rd) = s->snpc, s-> dnpc = src1 + imm; IFDEF(CONFIG_FTRACE, ftrace_jalr(rd, s->pc, s->dnpc, s->isa.inst.val)); BREAK;
-      }
+      immI(); src1R(); RD();
+      R(rd) = s->snpc, s-> dnpc = src1 + imm; IFDEF(CONFIG_FTRACE, ftrace_jalr(rd, s->pc, s->dnpc, s->isa.inst.val)); BREAK;
     } else if (opcode == 0x73) {
       NEMUTRAP(s->pc, R(10)); BREAK;
     }      
