@@ -95,7 +95,7 @@ static void statistic() {
   // IFDEF(CONFIG_FTRACE, ftrace_display());
   // void itrace_display();
   // itrace_display();
-  isa_reg_display();
+  // isa_reg_display();
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
