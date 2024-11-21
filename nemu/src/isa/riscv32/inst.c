@@ -201,27 +201,7 @@ static int decode_exec(Decode *s) {
       }
     } else if (opcode == 0x73) {
       NEMUTRAP(s->pc, R(10)); BREAK;
-    }
-    // case 0x33: //R
-      
-    // case 0x17: //U
-      
-    // case 0x37: //U
-      
-    // case 0x13: //I
-      
-    // case 0x3: //I
-      
-    // case 0x67: //I
-      
-    // case 0x23: //S
-      
-    // case 0x63: //B
-      
-    // case 0x6f: //J
-      
-    // case 0x73: //ebreak
-      
+    }      
     Assert(0, "INVALID INST");
   // }
 
