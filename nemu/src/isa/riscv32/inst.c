@@ -83,7 +83,6 @@ static int decode_exec(Decode *s) {
   INSTPAT_START();
 
   uint32_t i = s->isa.inst.val;
-  // std::bitset<32> i(s->isa.inst.val);
   int rs1 = get_bits(i, 19, 15); //寄存器1
   int rs2 = get_bits(i, 24, 20); //寄存器2
   rd = get_bits(i, 11, 7); //目标寄存器
