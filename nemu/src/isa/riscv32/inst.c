@@ -63,7 +63,7 @@ void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
 //     case TYPE_R: src1R(); src2R();       ; break;
 //   }
 // }
-static char opcode_table[0x7f] = {0};
+char opcode_table[0x7f] = {0};
 
 void initialize_opcode_table() {
   opcode_table[0x33] = 0;
@@ -95,9 +95,6 @@ static int decode_exec(Decode *s) {
 #define FUNC3 (i >> 12 & 0x7)
 #define FUNC7 (i >> 25 & 0xef)
 
-
-
-
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15); //寄存器1
   int rs2 = BITS(i, 24, 20); //寄存器2
@@ -105,7 +102,7 @@ static int decode_exec(Decode *s) {
   char opcode = opcode_table[i & 0x7f];
 
   switch (opcode) {
-    case 0: // R
+    case 0: //R
       src1R(); src2R();
       switch (FUNC3) {
         case 0x0: 
@@ -155,14 +152,12 @@ static int decode_exec(Decode *s) {
             case 0x1: R(rd) = src1 % src2; BREAK;
           }  
       }
-
     case 1: //U
       immU();
       R(rd) = s->pc + imm; BREAK;
     case 2: //U
       immU();
       R(rd) = imm; BREAK;
-
     case 3: //I
       immI(); src1R();
       switch (FUNC3) {
