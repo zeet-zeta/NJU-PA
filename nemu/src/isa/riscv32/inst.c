@@ -30,6 +30,7 @@
 //   TYPE_N, // none
 // };
 
+
 #define src1R() do { src1 = R(rs1); } while (0) //do {} while (0)用于防止这个宏在其他控制语句中被错误执行，将rs1对应寄存器的值赋给src1指向的位置
 #define src2R() do { src2 = R(rs2); } while (0)
 #define immI() do { imm = SEXT(BITS(i, 31, 20), 12); } while(0) //imm[11:0]
