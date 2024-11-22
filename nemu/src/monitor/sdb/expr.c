@@ -200,6 +200,9 @@ bool check_parentheses(int p, int q) {
 } //检查字符串是否被一对括号包围
 
 int eval(int p, int q) {
+  char *endptr;
+  bool success;
+  word_t t;
   if (p > q) {
     return 0; //处理一元运算符的val1
   }
@@ -207,7 +210,7 @@ int eval(int p, int q) {
     switch (tokens[p].type) {
       case TK_DEC:
       case TK_HEX:
-        char *endptr;
+        // char* endptr;
         errno = 0;
         word_t temp = strtoul(tokens[p].str, &endptr, tokens[p].type == TK_DEC ? 10 : 16);
         if (errno == ERANGE) {
@@ -221,8 +224,8 @@ int eval(int p, int q) {
         }
         break;
       case TK_REG:
-        bool success;
-        word_t t = isa_reg_str2val(tokens[p].str + 1, &success);
+        // bool success;
+        t = isa_reg_str2val(tokens[p].str + 1, &success);
         if (success) {
           return t;
         } else {
