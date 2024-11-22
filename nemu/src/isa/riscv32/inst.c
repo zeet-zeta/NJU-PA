@@ -67,19 +67,17 @@ void ftrace_jalr(int rd, uint32_t pc, uint32_t dst, uint32_t inst);
 
 static int rd = 0;
 static word_t src1 = 0, src2 = 0, imm = 0;
+
 static int decode_exec(Decode *s) {
-
   s->dnpc = s->snpc;
-
 // #define INSTPAT_INST(s) ((s)->isa.inst.val)
 // #define INSTPAT_MATCH(s, name, type, ... /* execute body */ ) { 
 //   decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type)); 
 //   __VA_ARGS__ ; 
 // } // __VA_ARGS__是一个特殊的宏，可作为语句执行
-
 #define BREAK R(0) = 0; return 0
 #define OPCODE (i & 0x7f)
-#define FUNC3 (i & 0x7)
+#define FUNC3 (i & 0x7000)
 #define FUNC7 ((i >> 25) & 0xef)
   uint32_t i = s->isa.inst.val;
   // switch (OPCODE) {
