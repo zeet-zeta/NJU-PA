@@ -77,8 +77,8 @@ static int decode_exec(Decode *s) {
 // } // __VA_ARGS__是一个特殊的宏，可作为语句执行
 #define BREAK R(0) = 0; return 0
 #define OPCODE (i & 0x7f)
-#define FUNC3 ((i >> 12) & 0x7)
-#define FUNC7 ((i >> 25) & 0xef)
+#define FUNC3 (i & 0x7000) >> 12
+#define FUNC7 (i & 0xfe000000) >> 25
   uint32_t i = s->isa.inst.val;
   switch (OPCODE) {
   // int opcode = OPCODE;
