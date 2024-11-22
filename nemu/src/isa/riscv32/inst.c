@@ -93,7 +93,7 @@ static int decode_exec(Decode *s) {
         case 0x5: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 >> imm; BREAK;
-            case 0x20: R(rd) = (int32_t) src1 >> (imm & 0x1f); BREAK;
+            default: R(rd) = (int32_t) src1 >> (imm & 0x1f); BREAK;
           }
         case 0x6: R(rd) = src1 | imm; BREAK;
         case 0x7: R(rd) = src1 & imm; BREAK;
@@ -135,8 +135,8 @@ static int decode_exec(Decode *s) {
         case 0x0: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 + src2; BREAK;
-            case 0x20: R(rd) = src1 - src2; BREAK;
             case 0x1: R(rd) = src1 * src2; BREAK;
+            default: R(rd) = src1 - src2; BREAK;
           }
         case 0x1: 
           switch (FUNC7) {
@@ -164,8 +164,8 @@ static int decode_exec(Decode *s) {
         case 0x5: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 >> (src2 & 0x1f); BREAK;
-            case 0x20: R(rd) = (int32_t) src1 >> (src2 & 0x1f); BREAK;
             case 0x1: R(rd) = src1 / src2; BREAK;
+            default: R(rd) = (int32_t) src1 >> (src2 & 0x1f); BREAK;
           }
         case 0x6: 
           switch (FUNC7) {
