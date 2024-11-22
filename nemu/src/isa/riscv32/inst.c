@@ -78,7 +78,7 @@ static int decode_exec(Decode *s) {
 #define BREAK R(0) = 0; return 0
 #define OPCODE (i & 0x7f)
 #define FUNC3 (i & 0x7000)
-#define FUNC7 ((i >> 25) & 0xef)
+#define FUNC7 (i & 0xfe000000)
   uint32_t i = s->isa.inst.val;
   // switch (OPCODE) {
   int opcode = OPCODE;
@@ -93,7 +93,7 @@ static int decode_exec(Decode *s) {
         case 0x5000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 >> imm; BREAK;
-            case 0x20: R(rd) = (int32_t) src1 >> (imm & 0x1f); BREAK;
+            case 0x40000000: R(rd) = (int32_t) src1 >> (imm & 0x1f); BREAK;
           }
         case 0x6000: R(rd) = src1 | imm; BREAK;
         case 0x7000: R(rd) = src1 & imm; BREAK;
@@ -129,48 +129,48 @@ static int decode_exec(Decode *s) {
         case 0x0: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 + src2; BREAK;
-            case 0x20: R(rd) = src1 - src2; BREAK;
-            case 0x1: R(rd) = src1 * src2; BREAK;
+            case 0x40000000: R(rd) = src1 - src2; BREAK;
+            case 0x2000000: R(rd) = src1 * src2; BREAK;
           }
         case 0x1000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 << (src2 & 0x1f); BREAK;
-            case 0x1: R(rd) = (1ll * (int32_t) src1 * (int32_t) src2) >> 32; BREAK;
+            case 0x2000000: R(rd) = (1ll * (int32_t) src1 * (int32_t) src2) >> 32; BREAK;
           }
         case 0x2000: 
           switch (FUNC7) {
             case 0x0: R(rd) = (int32_t) src1 < (int32_t) src2; BREAK;
-            case 0x1: R(rd) = (1ll * (int32_t) src1 * (uint32_t) src2) >> 32; BREAK;
+            case 0x2000000: R(rd) = (1ll * (int32_t) src1 * (uint32_t) src2) >> 32; BREAK;
           }
         
         case 0x3000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 < src2; BREAK;
-            case 0x1: R(rd) = (1ull * (uint32_t) src1 * (uint32_t) src2) >> 32; BREAK;
+            case 0x2000000: R(rd) = (1ull * (uint32_t) src1 * (uint32_t) src2) >> 32; BREAK;
           }
         
         case 0x4000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 ^ src2; BREAK;
-            case 0x1: R(rd) = (int32_t) src1 / (int32_t) src2; BREAK;
+            case 0x2000000: R(rd) = (int32_t) src1 / (int32_t) src2; BREAK;
           }
         
         case 0x5000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 >> (src2 & 0x1f); BREAK;
-            case 0x20: R(rd) = (int32_t) src1 >> (src2 & 0x1f); BREAK;
-            case 0x1: R(rd) = src1 / src2; BREAK;
+            case 0x40000000: R(rd) = (int32_t) src1 >> (src2 & 0x1f); BREAK;
+            case 0x2000000: R(rd) = src1 / src2; BREAK;
           }
         case 0x6000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 | src2; BREAK;
-            case 0x1: R(rd) = (int32_t) src1 % (int32_t) src2; BREAK; 
+            case 0x2000000: R(rd) = (int32_t) src1 % (int32_t) src2; BREAK; 
           }
         
         case 0x7000: 
           switch (FUNC7) {
             case 0x0: R(rd) = src1 & src2; BREAK;
-            case 0x1: R(rd) = src1 % src2; BREAK;
+            case 0x2000000: R(rd) = src1 % src2; BREAK;
           }  
       }
     } else if (opcode == 0x63) {
