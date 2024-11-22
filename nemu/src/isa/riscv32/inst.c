@@ -97,8 +97,8 @@ static int decode_exec(Decode *s) {
             case 0x0: R(rd) = src1 >> imm; BREAK;
             case 0x20: R(rd) = (int32_t) src1 >> (imm & 0x1f); BREAK;
           }
-        case 0x6: R(rd) = src1 | imm; BREAK;
-        case 0x7: R(rd) = src1 & imm; BREAK;
+        case 0x6000: R(rd) = src1 | imm; BREAK;
+        case 0x7000: R(rd) = src1 & imm; BREAK;
       }
     } else if (opcode == 0x17) {
       immU(); RD();
