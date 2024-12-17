@@ -32,8 +32,10 @@ word_t isa_query_intr() {
 
 word_t *isa_csr_translate(word_t csr_addr) {
   switch (csr_addr) {
-    case 0x341: return &cpu.mtvec;
-    case 0x305: return &cpu.mstatus;
+    case 0x305: return &cpu.mtvec;
+    case 0x300: return &cpu.mstatus;
+    case 0x341: return &cpu.mepc;
+    case 0x342: return &cpu.mcause;
     default: Assert(0, "unrecognized CSR: %x", csr_addr);
   }
 }
