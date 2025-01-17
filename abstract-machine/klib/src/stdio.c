@@ -101,12 +101,25 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           break;
         }
         case 'x': {
+          out[count++] = '0';
+          out[count++] = 'x';
+          int num = va_arg(ap, int);
+          count += my_itoa_hex(num, out + count);
+          break;
+        }
+        case '%': 
+          out[count++] = '%';
+          break;
+        case 'p': {
+          out[count++] = '0';
+          out[count++] = 'x';
           int num = va_arg(ap, int);
           count += my_itoa_hex(num, out + count);
           break;
         }
         default: 
-          out[count++] = *p;
+          // out[count++] = *p;
+          panic("Unknown format specifier");
       }
     } else {
       if (count < n - 1) {
