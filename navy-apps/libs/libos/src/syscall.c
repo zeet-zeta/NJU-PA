@@ -72,11 +72,11 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 extern char end;
-static intptr_t program_break = &end;
+static void *program_break = &end;
 void *_sbrk(intptr_t increment) {
   void *old = program_break;
-  void *new = old + increment;
-  if (__syscal__(SYS_brk, new, 0, 0) == 0) {
+  void *new = old + (int)increment;
+  if (_syscall_(SYS_brk, (intptr_t)new, 0, 0) == 0) {
     program_break = new;
     return old;
   }
