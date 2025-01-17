@@ -19,6 +19,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   cfg->vmemsz = cfg->width * cfg->height << 5;
 }
 
+// 客户程序修改帧缓存
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int x = ctl->x;
   int y = ctl->y;
