@@ -35,7 +35,7 @@ void do_syscall(Context *c) {
     case SYS_exit: halt(a[1]); c->GPRx = 0; break;
     case SYS_yield: yield(); c->GPRx = 0; break;
     case SYS_write: 
-      printf("HELLO form syscall.c\n");
+      printf("HELLO form syscall.c %d %d %d %dth\n", a[0], a[1], a[2], a[3]);
       if (a[1] == 1 || a[1] == 2) {
         for (int i = 0; i < a[3]; i++) {
           putch(*(char *)(a[2] + i));
