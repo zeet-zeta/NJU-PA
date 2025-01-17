@@ -71,8 +71,15 @@ int _write(int fd, void *buf, size_t count) {
   return 0;
 }
 
+extern char end;
+static intptr_t program_break = &end;
 void *_sbrk(intptr_t increment) {
-  return (void *)-1;
+  void *old = program_break;
+  void *new = old + increment;
+  if (__syscal__(SYS_brk, new, 0, 0) == 0) {
+    program_break = new;
+    return old;
+  }
 }
 
 int _read(int fd, void *buf, size_t count) {

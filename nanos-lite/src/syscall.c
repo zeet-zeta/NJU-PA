@@ -45,6 +45,9 @@ void do_syscall(Context *c) {
         panic("Unsupported fd", a[1]);
       }
       break;
+    case SYS_brk:
+      c->GPRx = 0;
+      break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
