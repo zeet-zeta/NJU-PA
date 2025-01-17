@@ -4,14 +4,22 @@
 
 static Context* (*user_handler)(Event, Context*) = NULL;
 
+#define USER_ECALL 11
 // 这个参数来源于a0寄存器，参见trap.S
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
-      case 0x1: 
-        ev.event = EVENT_YIELD;
-        c->mepc += 4;
+      case USER_ECALL: 
+        if (c->GPR1 == -1) {
+          ev.event = EVENT_YIELD;
+        }
+        else if (c->GPR1 == 1) {
+          ev.event = EVENT_SYSCALL;
+        }
+        else {
+          ev.event = EVENT_ERROR;
+        }
         break;
       default: ev.event = EVENT_ERROR; break;
     }
