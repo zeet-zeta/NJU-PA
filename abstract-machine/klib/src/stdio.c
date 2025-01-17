@@ -111,10 +111,10 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           out[count++] = '%';
           break;
         case 'p': {
-          // out[count++] = '0';
-          // out[count++] = 'x';
-          int num = va_arg(ap, int);
-          count += my_itoa_hex(num, out + count);
+          out[count++] = '0';
+          out[count++] = 'x';
+          uintptr_t ptr = (uintptr_t)va_arg(ap, void *);
+          count += my_itoa_hex(ptr, out + count);
           break;
         }
         default: 
