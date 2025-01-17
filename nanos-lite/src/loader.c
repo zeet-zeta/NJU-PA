@@ -34,8 +34,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
   ramdisk_read(&ehdr, offset, sizeof(Elf_Ehdr));
   offset += sizeof(Elf_Ehdr);
-  printf("%c", ehdr->e_ident[1]);
-  assert(*(uint32_t *)ehdr->e_ident == 0x464c457f);
+  assert(*(uint32_t *)ehdr.e_ident == 0x464c457f);
   assert(ehdr.e_machine == EXPECT_TYPE);
 
   for (int i = 0; i < ehdr.e_phnum; i++) {
