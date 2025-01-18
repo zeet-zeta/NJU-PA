@@ -51,7 +51,6 @@ int fs_open(const char *pathname, int flags, int mode) {
       return i;
     }
   }
-  printf("pathname: %s\n", pathname);
   panic("invalid pathname!");
   return -1;
 }
