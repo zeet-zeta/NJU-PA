@@ -66,10 +66,11 @@ size_t fs_read(int fd, void *buf, size_t len) {
 size_t fs_write(int fd, const void *buf, size_t len) {
   Finfo *cur = &file_table[fd];
   if (cur->write) return cur->write(buf, cur->open_offset, len);
-  assert(cur->open_offset + len <= cur->size);
-  ramdisk_write(buf, cur->disk_offset + cur->open_offset, len);
-  cur->open_offset += len;
-  return len;
+  // assert(cur->open_offset + len <= cur->size);
+  size_t write_len = cur->size - cur->open_offset < len ? cur->size - cur->open_offset : len;
+  ramdisk_write(buf, cur->disk_offset + cur->open_offset, write_len);
+  cur->open_offset += write_len;
+  return write_len;
 }
 size_t fs_lseek(int fd, size_t offset, int whence) {
   assert(fd >= 2);
