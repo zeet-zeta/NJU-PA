@@ -72,6 +72,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
 size_t fs_lseek(int fd, size_t offset, int whence) {
   assert(fd >= 2);
   Finfo *cur = &file_table[fd];
+  printf("%d %d %d\n", cur->open_offset, offset, whence);
   switch (whence) {
     case SEEK_SET: cur->open_offset = offset; break;
     case SEEK_CUR: cur->open_offset += offset; break;
