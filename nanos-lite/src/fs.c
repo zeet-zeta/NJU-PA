@@ -85,6 +85,7 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
     case SEEK_END: cur->open_offset = cur->size + offset; break;
     default: panic("invalid whence!");
   }
+  printf("%d\n hhh", fd);
   assert(cur->open_offset <= cur->size);
   return cur->open_offset;
 }
