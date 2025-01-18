@@ -54,6 +54,7 @@ int fs_open(const char *pathname, int flags, int mode) {
   return -1;
 }
 size_t fs_read(int fd, void *buf, size_t len) {
+  printf("%d %d %d\n", fd, len, file_table[fd].open_offset);
   Finfo *cur = &file_table[fd];
   if (cur->read) return cur->read(buf, cur->open_offset, len);
   assert(cur->open_offset + len <= cur->size);
@@ -72,7 +73,6 @@ size_t fs_write(int fd, const void *buf, size_t len) {
 size_t fs_lseek(int fd, size_t offset, int whence) {
   assert(fd >= 2);
   Finfo *cur = &file_table[fd];
-  printf("%d %d %d\n", cur->open_offset, offset, whence);
   switch (whence) {
     case SEEK_SET: cur->open_offset = offset; break;
     case SEEK_CUR: cur->open_offset += offset; break;
