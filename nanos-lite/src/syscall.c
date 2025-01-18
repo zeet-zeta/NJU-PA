@@ -35,7 +35,7 @@ void do_syscall(Context *c) {
     case SYS_lseek:
       c->GPRx = fs_lseek(a[1], a[2], a[3]); break;
     case SYS_gettimeofday:
-      c->GPRx = sys_gettimeofday((struct timeval *)a[1], (struct timezone *)a[2]);
+      c->GPRx = sys_gettimeofday((struct timeval *)a[1], (struct timezone *)a[2]); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
