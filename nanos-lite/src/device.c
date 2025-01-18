@@ -9,6 +9,7 @@
 #define NAME(key) \
   [AM_KEY_##key] = #key,
 
+static int w, h;
 static const char *keyname[256] __attribute__((used)) = {
   [AM_KEY_NONE] = "NONE",
   AM_KEYS(NAME)
@@ -37,13 +38,17 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  int w = io_read(AM_GPU_CONFIG).width;
-  int h = io_read(AM_GPU_CONFIG).height;
+  w = io_read(AM_GPU_CONFIG).width;
+  h = io_read(AM_GPU_CONFIG).height;
   return snprintf(buf, len, "WIDTH: %d\nHEIGHT: %d\n", w, h);
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  return 0;
+  int pixels_num = offset / 4;
+  int x = pixels_num % w;
+  int y = pixels_num / w;
+  io_write(AM_GPU_FBDRAW, x, y, (void *)buf, len / 4, 1, 1);
+  return len;
 }
 
 void init_device() {
