@@ -53,8 +53,6 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  printf("DrawRect: %d %d %d %d\n", x, y, w, h);
-  printf("Canvas: %d %d\n", canvas_x, canvas_y);
   uint32_t *pixels_start = pixels;
   for (int i = 0; i < h; i++) {
     int pos_x = x + canvas_x;

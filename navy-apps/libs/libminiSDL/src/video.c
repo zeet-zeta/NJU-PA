@@ -49,6 +49,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   assert(s->format->BytesPerPixel == 4);
   if (x == 0 && y == 0 && w == 0 && h == 0) {
     NDL_DrawRect((uint32_t *)s->pixels, 0, 0, s->w, s->h);
+    return;
   }
   uint32_t *pixels = malloc(w * h * 4);
   assert(pixels);
