@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 //复制src的内容到dst
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
@@ -15,6 +16,8 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   int src_h = srcrect == NULL ? src->h : srcrect->h;
   int dst_x = dstrect == NULL ? 0 : dstrect->x;
   int dst_y = dstrect == NULL ? 0 : dstrect->y;
+  
+  printf("src_x: %d, src_y: %d, src_w: %d, src_h: %d\n", src_x, src_y, src_w, src_h);
 
   int bpp = src->format->BytesPerPixel;
   uint8_t *src_pixels = src->pixels;
