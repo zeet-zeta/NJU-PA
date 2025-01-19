@@ -27,6 +27,10 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
       memcpy(&dst_pixels[dst_index], &src_pixels[src_index], bpp);
     }
   }
+  //打印dst_pixels的内容
+  for (int i = 0; i < dst->w * dst->h; i++) {
+    printf("%x ", dst_pixels[i]);
+  }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
@@ -47,14 +51,6 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   assert(s);
   assert(s->format->BytesPerPixel == 4);
-  //打印pixels的像素值
-  for (int i = 0; i < s->h; i++) {
-    for (int j = 0; j < s->w; j++) {
-      uint8_t *p = s->pixels + i * s->pitch + j * s->format->BytesPerPixel;
-      uint32_t color = *(uint32_t *)p;
-      printf("%x ", color);
-    }
-  }
   if (x == 0 && y == 0 && w == 0 && h == 0) {
     NDL_DrawRect((uint32_t *)s->pixels, 0, 0, s->w, s->h);
     return;
