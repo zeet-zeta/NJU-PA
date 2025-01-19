@@ -8,9 +8,15 @@ int main() {
   NDL_Init(0);
   int w, h;
   void *bmp = BMP_Load("/share/pictures/projectn.bmp", &w, &h);
+
+  uint32_t *pixels = (uint32_t *)bmp;
+  for (int i = 0; i < w * h; i ++) {
+    printf("%x", pixels[i]);
+  }
+
   assert(bmp);
   NDL_OpenCanvas(&w, &h);
-  NDL_DrawRect((uint32_t *)bmp, 0, 0, w, h);
+  NDL_DrawRect(bmp, 0, 0, w, h);
   free(bmp);
   NDL_Quit();
   printf("Test ends! Spinning...\n");
