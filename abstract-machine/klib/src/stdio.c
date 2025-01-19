@@ -120,6 +120,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
         default: 
           // out[count++] = *p;
           panic("Unknown format specifier");
+          printf("Unknown format specifier: %c%c%c%c\n", *p, *(p + 1), *(p + 2), *(p + 3));
       }
     } else {
       if (count < n - 1) {
