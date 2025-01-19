@@ -70,6 +70,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   //   pixels += w;
   // }
   // write(fbdev, pixels, w * sizeof(uint32_t));
+  for (int i = 0; i < w * h;i++) {
+    printf("%x ", pixels[i]);
+  }
   uint32_t *pixels_start = pixels;
   for (int i = 0; i < h; i++) {
     int pos_x = x + canvas_x;
@@ -78,11 +81,6 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     assert(pos_y >= 0 && pos_y < screen_h);
     lseek(fbdev, (pos_x + pos_y * screen_w) * 4, SEEK_SET);
     write(fbdev, pixels_start, w * 4);
-    //打印pixels
-    for (int j = 0; j < w; j++) {
-      printf("%x ", pixels_start[j]);
-    }
-    printf("\n");
     pixels_start += w;
   }
 }
