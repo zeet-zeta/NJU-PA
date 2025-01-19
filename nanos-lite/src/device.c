@@ -1,4 +1,5 @@
 #include <common.h>
+#include "amdev.h"
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
@@ -23,8 +24,9 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  bool keydown = io_read(AM_INPUT_KEYBRD).keydown;
-  int keycode = io_read(AM_INPUT_KEYBRD).keycode;
+  AM_INPUT_KEYBRD_T t = io_read(AM_INPUT_KEYBRD);
+  bool keydown = t.keydown;
+  int keycode = t.keycode;
   if (keycode == AM_KEY_NONE) {
     return 0;
   }
@@ -38,8 +40,9 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  w = io_read(AM_GPU_CONFIG).width;
-  h = io_read(AM_GPU_CONFIG).height;
+  AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
+  w = t.width;
+  h = t.height;
   return snprintf(buf, len, "WIDTH: %d\nHEIGHT: %d\n", w, h);
 }
 
