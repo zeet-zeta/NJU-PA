@@ -38,6 +38,7 @@ int SDL_RemoveTimer(SDL_TimerID id) {
 }
 
 uint32_t SDL_GetTicks() {
+  //原则上需要检测是否溢出，但是要经过49天才会溢出
   return NDL_GetTicks();
 }
 

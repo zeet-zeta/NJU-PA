@@ -24,53 +24,44 @@ int SDL_PushEvent(SDL_Event *ev) {
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
-  // if (head == tail) {
-  //   char buf[64];
-  //   if (NDL_PollEvent(buf, sizeof(buf)) == 0) return 0;
-  //   SDL_Event new_event;
-  //   if (strncmp(buf, "kd", 2) == 0) {
-  //     new_event.type = SDL_KEYDOWN;
-  //   } else if (strncmp(buf, "ku", 2) == 0) {
-  //     new_event.type = SDL_KEYUP;
-  //   } else {
-  //     return 0;
-  //   }
-  //   int len = strlen(buf);
-  //   buf[len - 1] = '\0';
-  //   for (int i = 0; i < keynum; i++) {
-  //     if (strcmp(buf + 3, keyname[i]) == 0) {
-  //       new_event.key.keysym.sym = i;
-  //       if (new_event.type == SDL_KEYDOWN) {
-  //         keystate[i] = 1;
-  //       } else {
-  //         keystate[i] = 0;
-  //       }
-  //       break;
-  //     }
-  //   }
-  //   SDL_PushEvent(&new_event);
-  //   return 1;
-  // } else {
-  //   return 0;
-  // }
-  return 0;
+  char buf[64];
+  if (NDL_PollEvent(buf, sizeof(buf)) == 0) return 0;
+  if (strncmp(buf, "kd", 2) == 0) {
+    ev->type = SDL_KEYDOWN;
+  } else {
+    ev->type = SDL_KEYUP;
+  }
+  int len = strlen(buf);
+  buf[len - 1] = '\0';
+  for (int i = 0; i < keynum; i++) {
+    if (strcmp(buf + 3, keyname[i]) == 0) {
+      ev->key.keysym.sym = i;
+      if (ev->type == SDL_KEYDOWN) {
+        keystate[i] = 1;
+      } else {
+        keystate[i] = 0;
+      }
+      break;
+    }
+  }
+  return 1;
 }
 
-int SDL_WaitEvent(SDL_Event *event) {
+int SDL_WaitEvent(SDL_Event *ev) {
   char buf[64];
   while (1) {
     if (NDL_PollEvent(buf, sizeof(buf)) == 0) continue;
     if (strncmp(buf, "kd", 2) == 0) {
-      event->type = SDL_KEYDOWN;
+      ev->type = SDL_KEYDOWN;
     } else {
-      event->type = SDL_KEYUP;
+      ev->type = SDL_KEYUP;
     }
     int len = strlen(buf);
     buf[len - 1] = '\0';
     for (int i = 0; i < keynum; i++) {
       if (strcmp(buf + 3, keyname[i]) == 0) {
-        event->key.keysym.sym = i;
-        if (event->type == SDL_KEYDOWN) {
+        ev->key.keysym.sym = i;
+        if (ev->type == SDL_KEYDOWN) {
           keystate[i] = 1;
         } else {
           keystate[i] = 0;
