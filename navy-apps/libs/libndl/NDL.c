@@ -87,6 +87,7 @@ int NDL_Init(uint32_t flags) {
   }
   evtdev = open("/dev/events", O_RDONLY);
   fbdev = open("/dev/fb", O_RDWR);
+  //初始化获得的是屏幕大小！！！
   int fd = open("/proc/dispinfo", O_RDONLY);
   char buf[64];
   read(fd, buf, sizeof(buf) - 1);
