@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-//复制src的内容到dst
+//复制src的内容到dst，兼容不同的bpp
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
@@ -18,6 +18,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   int dst_y = dstrect == NULL ? 0 : dstrect->y;
   
   int bpp = src->format->BytesPerPixel;
+  assert(bpp == 4);
   uint32_t *src_pixels = (uint32_t *)src->pixels;
   uint32_t *dst_pixels = (uint32_t *)dst->pixels;
   for (int y = 0; y < src_h; y++) {
@@ -25,7 +26,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
       int src_index = (src_y + y) * src->w + src_x + x;
       int dst_index = (dst_y + y) * dst->w + dst_x + x;
       //中括号是一个语法糖，跳动的距离还是依照指针的类型
-      memcpy(dst + dst_index, src + src_index, bpp);
+      memcpy(dst_pixels + dst_index, src_pixels + src_index, bpp);
     }
   }
 }
