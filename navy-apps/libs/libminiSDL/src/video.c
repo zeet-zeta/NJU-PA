@@ -25,7 +25,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
       int src_index = (src_y + y) * src->w + src_x + x;
       int dst_index = (dst_y + y) * dst->w + dst_x + x;
       //中括号是一个语法糖，跳动的距离还是依照指针的类型
-      memcpy(dst + dst_index, src + src_index, bpp);
+      memcpy(dst + dst_index * bpp, src + src_index * bpp, bpp);
     }
   }
 }
