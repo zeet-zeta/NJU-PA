@@ -74,7 +74,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   for (int i = 0; i < h; i++) {
     int pos_x = x + canvas_x;
     int pos_y = y + canvas_y + i;
-    printf("pos_x: %d, pos_y: %d\n", pos_x, pos_y);
+    printf("%d", sizeof(uint32_t));
     assert(pos_x >= 0 && pos_x < screen_w);
     assert(pos_y >= 0 && pos_y < screen_h);
     lseek(fbdev, (pos_x + pos_y * screen_w) * 4, SEEK_SET);
