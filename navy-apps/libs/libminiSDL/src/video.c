@@ -25,7 +25,6 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
       int src_index = (src_y + y) * src->w + src_x + x;
       int dst_index = (dst_y + y) * dst->w + dst_x + x;
       memcpy(&dst_pixels[dst_index], &src_pixels[src_index], bpp);
-      printf("%x ", *(uint32_t *)(&dst_pixels[dst_index]));
     }
   }
 }
