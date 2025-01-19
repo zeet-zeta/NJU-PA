@@ -84,6 +84,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
       for (int j = 0; j < w; j++) {
         uint8_t c = ((uint8_t *)s->pixels)[(y + i) * s->w + x + j];
         uint32_t temp = (s->format->palette->colors[c]).val;
+        temp = (temp << 8) | 0xff;
         pixels[i * w + j] = temp;
       }
     }
