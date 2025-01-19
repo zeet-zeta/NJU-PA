@@ -5,10 +5,12 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <fcntl.h>
+#include <assert.h>
 
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+static int canvas_x = 0, canvas_y = 0;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -34,6 +36,9 @@ void NDL_OpenCanvas(int *w, int *h) {
     *w = screen_w;
     *h = screen_h;
   }
+  close(fd);
+  canvas_x = (screen_w - *w) / 2;
+  canvas_y = (screen_h - *h) / 2;
   assert(*w > 0 && *h > 0);
   printf("Canvas size: %d x %d\n", *w, *h);
   if (getenv("NWM_APP")) {
@@ -56,14 +61,23 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  lseek(fbdev, (x + y * screen_w) * sizeof(uint32_t), SEEK_SET);
   printf("DrawRect: %d %d %d %d\n", x, y, w, h);
-  for (int i = 0; i < h - 1; i++) {
-    write(fbdev, pixels, w * sizeof(uint32_t));
-    lseek(fbdev, (screen_w - w) * sizeof(uint32_t), SEEK_CUR);
+  // lseek(fbdev, (x + y * screen_w) * sizeof(uint32_t), SEEK_SET);
+  // for (int i = 0; i < h - 1; i++) {
+  //   write(fbdev, pixels, w * sizeof(uint32_t));
+  //   lseek(fbdev, (screen_w - w) * sizeof(uint32_t), SEEK_CUR);
+  //   pixels += w;
+  // }
+  // write(fbdev, pixels, w * sizeof(uint32_t));
+  for (int i = 0; i < h; i++) {
+    int pos_x = x + canvas_x;
+    int pos_y = y + canvas_y + i;
+    assert(pos_x >= 0 && pos_x < screen_w);
+    assert(pos_y >= 0 && pos_y < screen_h);
+    lseek(fbdev, (pos_x + pos_y * screen_w) * 4, SEEK_SET);
+    write(fbdev, pixels, w * 4);
     pixels += w;
   }
-  write(fbdev, pixels, w * sizeof(uint32_t));
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
