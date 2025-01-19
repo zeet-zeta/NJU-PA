@@ -4,15 +4,53 @@
 #include <string.h>
 #include <stdlib.h>
 
+//复制src的内容到dst
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+
+  int src_x = srcrect == NULL ? 0 : srcrect->x;
+  int src_y = srcrect == NULL ? 0 : srcrect->y;
+  int src_w = srcrect == NULL ? src->w : srcrect->w;
+  int src_h = srcrect == NULL ? src->h : srcrect->h;
+  int dst_x = dstrect == NULL ? 0 : dstrect->x;
+  int dst_y = dstrect == NULL ? 0 : dstrect->y;
+
+  int bpp = src->format->BytesPerPixel;
+  uint8_t *src_pixels = src->pixels;
+  uint8_t *dst_pixels = dst->pixels;
+  for (int y = 0; y < src_h; y++) {
+    for (int x = 0; x < src_w; x++) {
+      int src_index = (src_y + y) * src->w + src_x + x;
+      int dst_index = (dst_y + y) * dst->w + dst_x + x;
+      memcpy(&dst_pixels[dst_index], &src_pixels[src_index], bpp);
+    }
+  }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  int x0 = dstrect == NULL ? 0 : dstrect->x;  
+  int y0 = dstrect == NULL ? 0 : dstrect->y;
+  int w = dstrect == NULL ? dst->w : dstrect->w;
+  int h = dstrect == NULL ? dst->h : dstrect->h;
+  int bpp = dst->format->BytesPerPixel;
+  uint8_t *pixels = dst->pixels;
+  for (int y = y0; y < y0 + h; y++) {
+    for (int x = x0; x < x0 + w; x++) {
+      uint8_t *p = pixels + y * dst->pitch + x * bpp; //字节
+      *(uint32_t *)p = color;
+    }
+  }
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+  assert(s);
+  assert(s->format->BytesPerPixel == 4);
+  uint32_t *pixels = malloc(w * h * 4);
+  assert(pixels);
+  for (int i = 0; i < h; i++) {
+    memcpy(pixels + i * w, s->pixels + (y + i) * s->w + x, w * 4);
+  }
 }
 
 // APIs below are already implemented.
