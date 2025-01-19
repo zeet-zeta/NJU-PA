@@ -17,8 +17,6 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   int dst_x = dstrect == NULL ? 0 : dstrect->x;
   int dst_y = dstrect == NULL ? 0 : dstrect->y;
   
-  printf("src_x: %d, src_y: %d, src_w: %d, src_h: %d\n", src_x, src_y, src_w, src_h);
-
   int bpp = src->format->BytesPerPixel;
   uint8_t *src_pixels = src->pixels;
   uint8_t *dst_pixels = dst->pixels;
@@ -54,6 +52,8 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   for (int i = 0; i < h; i++) {
     memcpy(pixels + i * w, s->pixels + (y + i) * s->w + x, w * 4);
   }
+  NDL_DrawRect(pixels, x, y, w, h);
+  free(pixels);
 }
 
 // APIs below are already implemented.
