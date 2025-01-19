@@ -47,7 +47,10 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   assert(s);
   assert(s->format->BytesPerPixel == 4);
-  printf("UpdateRect: %d %d %d %d\n", x, y, w, h);
+  if (x == 0 && y == 0 && w == 0 && h == 0) {
+    w = s->w;
+    h = s->h;
+  }
   uint32_t *pixels = malloc(w * h * 4);
   assert(pixels);
   for (int i = 0; i < h; i++) {
