@@ -11,9 +11,9 @@ int main() {
 
   uint32_t *pixels = (uint32_t *)bmp;
   printf("BMP size: %d x %d\n", w, h);
-  for (int i = 0; i < w * h; i ++) {
-    printf("%x", pixels[i]);
-  }
+  // for (int i = 0; i < w * h; i ++) {
+    // printf("%x", pixels[i]);
+  // }
 
   assert(bmp);
   NDL_OpenCanvas(&w, &h);
