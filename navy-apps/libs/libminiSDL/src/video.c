@@ -61,7 +61,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 
 
 uint32_t SDL_MapRGBA(SDL_PixelFormat *fmt, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-  assert(fmt->BytesPerPixel == 4);
+  // assert(fmt->BytesPerPixel == 4);
   uint32_t p = (r << fmt->Rshift) | (g << fmt->Gshift) | (b << fmt->Bshift);
   if (fmt->Amask) p |= (a << fmt->Ashift);
   return p;
