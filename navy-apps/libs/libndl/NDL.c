@@ -70,13 +70,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   //   pixels += w;
   // }
   // write(fbdev, pixels, w * sizeof(uint32_t));
-  int count = 0;
-  for (int i = 0; i < w * h;i++) {
-    if (pixels[i] != 0) {
-      count++;
-    }
+  for (int i = 0; i < w * h; i++) {
+    printf("%d ", pixels[i]);
   }
-  printf("count: %d\n", count);
   uint32_t *pixels_start = pixels;
   for (int i = 0; i < h; i++) {
     int pos_x = x + canvas_x;
