@@ -1,5 +1,6 @@
 #include <NDL.h>
 #include <SDL.h>
+#include <string.h>
 
 #define keyname(k) #k,
 
@@ -8,8 +9,8 @@ static const char *keyname[] = {
   _KEYS(keyname)
 };
 
-// int keynum = sizeof(keyname) / sizeof(keyname[0]);
-// static uint8_t keystate[sizeof(keyname) / sizeof(keyname[0])];
+int keynum = sizeof(keyname) / sizeof(keyname[0]);
+static uint8_t keystate[sizeof(keyname) / sizeof(keyname[0])];
 // static SDL_Event event_queue[32];
 // static int head = 0, tail = 0;
 
@@ -56,7 +57,29 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-  return 1;
+  char buf[64];
+  while (1) {
+    if (NDL_PollEvent(buf, sizeof(buf)) == 0) continue;
+    if (strncmp(buf, "kd", 2) == 0) {
+      event->type = SDL_KEYDOWN;
+    } else {
+      event->type = SDL_KEYUP;
+    }
+    int len = strlen(buf);
+    buf[len - 1] = '\0';
+    for (int i = 0; i < keynum; i++) {
+      if (strcmp(buf + 3, keyname[i]) == 0) {
+        event->key.keysym.sym = i;
+        if (event->type == SDL_KEYDOWN) {
+          keystate[i] = 1;
+        } else {
+          keystate[i] = 0;
+        }
+        break;
+      }
+    }
+    return 1;
+  }
 }
 
 int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
