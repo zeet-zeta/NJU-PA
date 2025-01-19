@@ -17,7 +17,7 @@ const int N = 10;
 const char *path = "/share/slides/slides-%d.bmp";
 
 static SDL_Surface *screen = NULL;
-static int cur = 0;
+static int cur = 1;
 
 void render() {
   char fname[256];
