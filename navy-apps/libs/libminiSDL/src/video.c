@@ -16,6 +16,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   int src_h = srcrect == NULL ? src->h : srcrect->h;
   int dst_x = dstrect == NULL ? 0 : dstrect->x;
   int dst_y = dstrect == NULL ? 0 : dstrect->y;
+  printf("Blit：%d %d %d %d %d %d\n", src_x, src_y, src_w, src_h, dst_x, dst_y);
   
   int bpp = src->format->BytesPerPixel;
   uint8_t *src_pixels = src->pixels;
