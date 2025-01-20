@@ -23,20 +23,21 @@ static void sh_prompt() {
 }
 
 static void sh_handle_cmd(const char *cmd) {
-  char command[128];
-  strcpy(command, cmd);
-  command[ strlen(command) - 1 ] = '\0'; 
-  const char split[2] = " ";
-  char *token ; 
-  char *argv [16];
+  setenv("PATH", "/bin", 0);
+  char line_copy[32];
+  strcpy(line_copy, cmd);
+  int len = strlen(line_copy);
+  printf("cmd: %s\n", cmd);
+  printf("%d\n", len);
+  line_copy[len - 1] = '\0';
   int argc = 0;
-  token = strtok(command, split); 
-  while( token != NULL ) {
-      argv [ argc++] = token ;
-      token = strtok(NULL, split); 
+  char *argv[16] = {};
+  for (char *p = strtok(line_copy, " "); p; p = strtok(NULL, " ")) {
+    argv[argc++] = p;
   }
-  argv [ argc ] = NULL;
-  execvp(argv [0] , argv) ;
+  argv[argc] = NULL;
+  execvp(argv[0], argv);
+  sh_printf("sh: command not found: %s\n", cmd);
 }
 
 void builtin_sh_run() {
