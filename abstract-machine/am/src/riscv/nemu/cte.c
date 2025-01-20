@@ -45,9 +45,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   //Area [start, end)
   Context *c = (Context *)(kstack.end - sizeof(Context));
-  printf("entry:%p", entry);
   c->mepc = (uintptr_t)entry;
-  printf("c->mepc: %x\n", c->mepc);
   c->mstatus = 0x1800;
   c->GPR2 = (uintptr_t)arg; //给f函数传参
   return c;
