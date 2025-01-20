@@ -31,10 +31,16 @@ void switch_boot_pcb() {
   current = &pcb_boot;
 }
 
- void f(void *arg) {
+void f(void *arg) {
+  // while (1) {
+  //   putch("?AB"[(uintptr_t)arg > 2 ? 0 : (uintptr_t)arg]);
+  //   for (int volatile i = 0; i < 100000; i++) ;
+  //   yield();
+  // }
+  int j = 1;
   while (1) {
-    putch("?AB"[(uintptr_t)arg > 2 ? 0 : (uintptr_t)arg]);
-    for (int volatile i = 0; i < 100000; i++) ;
+    // Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", *(int *)arg, j);
+    j ++;
     yield();
   }
 }
