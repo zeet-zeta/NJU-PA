@@ -25,7 +25,7 @@ int mm_brk(uintptr_t brk) {
 }
 
 void init_mm() {
-  pf = (void *)ROUNDUP(heap.start, PGSIZE);
+  pf = (void *)ROUNDUP(heap.start, PGSIZE) + PGSIZE * 4;
   Log("free physical pages starting from %p", pf);
 
 #ifdef HAS_VME
