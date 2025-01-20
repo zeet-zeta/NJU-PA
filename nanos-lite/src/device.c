@@ -24,7 +24,7 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  // yield();
+  yield();
   AM_INPUT_KEYBRD_T t = io_read(AM_INPUT_KEYBRD);
   bool keydown = t.keydown;
   int keycode = t.keycode;
@@ -50,7 +50,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 //把buf中的内容写到屏幕上，可以和am中gpu.c比较
 //这里的x和y是屏幕参数
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  // yield();
+  yield();
   int pixels_num = offset / 4;
   int x = pixels_num % w;
   int y = pixels_num / w;
