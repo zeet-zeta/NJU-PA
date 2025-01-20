@@ -68,6 +68,10 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   while (argv[argc]) argc++;
   int envc = 0;
   while (envp[envc]) envc++;
+  if (envc == 0) {
+    envp = (char *[]){NULL};
+    envc = 1;
+  }
 
   uintptr_t ustack_end = (uintptr_t)new_page(8);
   // uintptr_t ustack_end = (uintptr_t)heap.end;
