@@ -68,12 +68,14 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   int envc = 0;
   while (envp[envc]) envc++;
 
-  // uintptr_t ustack_end = (uintptr_t)new_page(8);
-  uintptr_t ustack_end = (uintptr_t)heap.end;
+  uintptr_t ustack_end = (uintptr_t)new_page(8);
+  // uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
-  char **argv_copy = malloc(argc * sizeof(char *));
-  char **envp_copy = malloc(envc * sizeof(char *));
-  printf("%p %p", argv_copy, envp_copy);
+  //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
+  // char **argv_copy = malloc(argc * sizeof(char *));
+  // char **envp_copy = malloc(envc * sizeof(char *));
+  char *argv_copy[argc];
+  char *envp_copy[envc];
 
   for (int i = envc - 1; i >= 0; i--) {
     ustack_top -= strlen(envp[i]) + 1; // '\0'
@@ -95,6 +97,4 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
   pcb->cp->GPRx = ustack_top;
-  free(argv_copy);
-  free(envp_copy);
 }
