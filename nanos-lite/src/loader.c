@@ -52,12 +52,12 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     }
   }
   fs_close(fd);
+  printf("load %s success\n", filename);
   return ehdr.e_entry;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
-  printf("entry: %x\n", (uint32_t)entry);
   ((void(*)())entry) (); //调用刚加载的程序
 }
 
