@@ -65,10 +65,14 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   int argc = 0;
+  assert(argv == NULL);
   while (argv[argc]) argc++;
   int envc = 0;
-  assert(envp== NULL);
-  while (envp[envc]) envc++;
+  if (envp == NULL) {
+    envc = 0;
+  } else {
+    while (envp[envc]) envc++;
+  }
 
   uintptr_t ustack_end = (uintptr_t)new_page(8);
   // uintptr_t ustack_end = (uintptr_t)heap.end;
