@@ -15,6 +15,9 @@ void hello_fun(void *arg) {
     //bug的原因在于我尝试*(int *)arg，就会将读取0x00000001的内存，而不是arg的值
     // printf("Hello! ");
     j ++;
+    if (j % 100000 == 0) {
+      printf("Hello! ");
+    }
     yield();
   }
 }
