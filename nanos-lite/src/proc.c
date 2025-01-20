@@ -39,7 +39,7 @@ void f(void *arg) {
   // }
   int j = 1;
   while (1) {
-    // Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", *(int *)arg, j);
+    printf("Hello World from Nanos-lite with arg  for the %dth time!", j);
     j ++;
     yield();
   }
