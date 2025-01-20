@@ -68,14 +68,14 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   if (argv == NULL) {
     argc = 0;
   } else {
-    while (argv[argc]) argc++;
+    while (argv[argc] != NULL) argc++;
   }
   int envc = 0;
   if (envp == NULL) {
     envc = 0;
   } else {
     printf("look here\n");
-    while (envp[envc]) envc++;
+    while (envp[envc] != NULL) envc++;
   }
 
   uintptr_t ustack_end = (uintptr_t)new_page(8);
