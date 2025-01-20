@@ -4,6 +4,10 @@
 #include <sys/time.h>
 #include "proc.h"
 
+extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+extern void naive_uload(PCB *pcb, const char *filename);
+extern void switch_boot_pcb();
+
 int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
   tv->tv_sec = us / 1000000;
@@ -11,10 +15,12 @@ int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
   return 0;
 }
 
-extern void naive_uload(PCB *pcb, const char *filename);
 
 int sys_execve(const char *pathname, const char *argv[], const char *envp[]) {
-  naive_uload(NULL, pathname);
+  // naive_uload(NULL, pathname);
+  context_uload(current, pathname, (char * const *)argv, (char * const *)envp);
+  switch_boot_pcb();
+  yield();
   return 0;
 }
 

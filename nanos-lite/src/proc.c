@@ -6,8 +6,8 @@ static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
 static PCB pcb_boot = {};
 PCB *current = NULL;
 
-extern void naive_uload(PCB *pcb, const char *filename);
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
@@ -31,16 +31,18 @@ void switch_boot_pcb() {
   current = &pcb_boot;
 }
 
+extern void naive_uload(PCB *pcb, const char *filename);
 void init_proc() {
-  context_kload(&pcb[0], hello_fun, (void *)1);
+  // context_kload(&pcb[0], hello_fun, (void *)1);
   
-  char *argv_example[] = {"pal", "--skip", NULL};
-  char *envp_example[] = {"ex", "aha", NULL};
+  // char *argv_example[] = {"pal", "--skip", NULL};
+  // char *envp_example[] = {"ex", "aha", NULL};
   //数组的指针本身是常量，不能改变指向的地址，但指针指向的结果（字符串内容）可以是常量或非常量，具体取决于如何定义
-  context_uload(&pcb[1], "/bin/pal", argv_example, envp_example);
-  switch_boot_pcb();
+  // context_uload(&pcb[1], "/bin/pal", argv_example, envp_example);
+  // switch_boot_pcb();
 
   Log("Initializing processes...");
+  naive_uload(NULL, "/bin/exec-test");
   
 
   // load program here
