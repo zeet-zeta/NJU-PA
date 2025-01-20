@@ -27,7 +27,7 @@ int my_itoa(int value, char *str) {
     return count;
 }
 
-int my_itoa_hex(int value, char *str) {
+int my_itoa_hex(unsigned int value, char *str) {
     int count = 0;
     char hex_chars[] = "0123456789abcdef";
     if (value == 0) {
@@ -114,7 +114,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
           out[count++] = '0';
           out[count++] = 'x';
           int ptr = ((int)va_arg(ap, void *));
-          printf("ptr: %d\n", ptr);
           count += my_itoa_hex(ptr, out + count);
           break;
         }
