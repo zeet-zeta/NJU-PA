@@ -27,13 +27,12 @@ static void sh_handle_cmd(const char *cmd) {
   setenv("PATH", "/bin", 0);
   char line_copy[32];
   strcpy(line_copy, cmd);
-  printf("cmd: %s\n", cmd);
-  printf("line_copy: %s\n", line_copy);
   int len = strlen(line_copy);
   line_copy[len - 1] = '\0';
   if (line_copy) *line_copy = '\0';
-  int argc = 0;
+  int argc = 1;
   char *argv[16] = {};
+  argv[0] = line_copy;
   for (char *p = strtok(line_copy, " "); p; p = strtok(NULL, " ")) {
     argv[argc++] = p;
   }
