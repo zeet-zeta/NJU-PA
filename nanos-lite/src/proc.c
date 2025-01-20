@@ -11,7 +11,7 @@ extern void naive_uload(PCB *pcb, const char *filename);
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
-    Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", *(int *)arg, j);
+    Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", arg, j);
     j ++;
     yield();
   }
@@ -31,23 +31,9 @@ void switch_boot_pcb() {
   current = &pcb_boot;
 }
 
-void f(void *arg) {
-  // while (1) {
-  //   putch("?AB"[(uintptr_t)arg > 2 ? 0 : (uintptr_t)arg]);
-  //   for (int volatile i = 0; i < 100000; i++) ;
-  //   yield();
-  // }
-  int j = 1;
-  while (1) {
-    printf("Hello World from Nanos-lite with arg  for the %dth time!", j);
-    j ++;
-    yield();
-  }
-}
-
 void init_proc() {
-  context_kload(&pcb[0], f, (void *)1);
-  context_kload(&pcb[1], f, (void *)2);
+  context_kload(&pcb[0], hello_fun, (void *)1);
+  context_kload(&pcb[1], hello_fun, (void *)2);
   switch_boot_pcb();
 
   Log("Initializing processes...");
