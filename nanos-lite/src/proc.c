@@ -21,9 +21,9 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 }
 
 Context *schedule(Context *prev) {
-  printf("in schedule\n");
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  assert(current->cp != NULL);
   return current->cp;
 }
 
