@@ -29,10 +29,8 @@ static void sh_handle_cmd(const char *cmd) {
   strcpy(line_copy, cmd);
   int len = strlen(line_copy);
   line_copy[len - 1] = '\0';
-  if (line_copy) *line_copy = '\0';
-  int argc = 1;
+  int argc = 0;
   char *argv[16] = {};
-  argv[0] = line_copy;
   for (char *p = strtok(line_copy, " "); p; p = strtok(NULL, " ")) {
     argv[argc++] = p;
   }
