@@ -3,10 +3,10 @@
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-  void *old = pf;
+  // void *old = pf;
   pf += nr_page * PGSIZE;
-  printf("new_page: %p\n", old);
-  return old;
+  // printf("new_page: %p\n", old);
+  return pf;
 }
 
 #ifdef HAS_VME
