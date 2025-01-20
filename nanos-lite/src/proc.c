@@ -9,6 +9,7 @@ PCB *current = NULL;
 extern void naive_uload(PCB *pcb, const char *filename);
 
 void hello_fun(void *arg) {
+  printf("Hello World from Nanos-lite with arg '%d' for the 1th time!\n", *(int *)arg);
   int j = 1;
   while (1) {
     Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", *(int *)arg, j);
