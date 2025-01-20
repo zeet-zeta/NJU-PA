@@ -26,7 +26,15 @@ static void sh_handle_cmd(const char *cmd) {
   char *line = strchr(cmd, '\n');
   if (line) *line = '\0';
   setenv("PATH", "/bin", 0);
-  char *argv[] = {(char *)cmd, NULL};
+
+  char *line_copy = strdup(cmd);
+  int argc = 0;
+  char *argv[16] = {};
+  for (char *p = strtok(line_copy, " "); p; p = strtok(NULL, " ")) {
+    argv[argc++] = p;
+  }
+  argv[argc] = NULL;
+  free(line_copy);
   execvp(cmd, argv);
   sh_printf("sh: command not found: %s\n", cmd);
 }
