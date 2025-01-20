@@ -18,6 +18,7 @@ int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
 
 int sys_execve(const char *pathname, const char *argv[], const char *envp[]) {
   // naive_uload(NULL, pathname);
+  printf("sys_execve: %s\n", pathname);
   context_uload(current, pathname, (char * const *)argv, (char * const *)envp);
   switch_boot_pcb();
   yield();
