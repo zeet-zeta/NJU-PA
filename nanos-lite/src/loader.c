@@ -73,6 +73,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   uintptr_t ustack_top = ustack_end;
   char **argv_copy = malloc(argc * sizeof(char *));
   char **envp_copy = malloc(envc * sizeof(char *));
+  printf("%p %p", argv_copy, envp_copy);
 
   for (int i = envc - 1; i >= 0; i--) {
     ustack_top -= strlen(envp[i]) + 1; // '\0'
