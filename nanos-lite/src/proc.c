@@ -33,9 +33,9 @@ void switch_boot_pcb() {
 
 
 void init_proc() {
-  switch_boot_pcb();
   context_kload(&pcb[0], hello_fun, (void *)1);
   context_kload(&pcb[1], hello_fun, (void *)2);
+  switch_boot_pcb();
 
   Log("Initializing processes...");
   yield();
