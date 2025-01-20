@@ -11,6 +11,7 @@ extern void naive_uload(PCB *pcb, const char *filename);
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
+    //bug的原因在于我尝试*(int *)arg，就会将读取0x00000001的内存，而不是arg的值
     Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", arg, j);
     j ++;
     yield();
