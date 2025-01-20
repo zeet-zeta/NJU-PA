@@ -34,7 +34,6 @@ static void sh_handle_cmd(const char *cmd) {
     argv[argc++] = p;
   }
   argv[argc] = NULL;
-  free(line_copy);
   execvp(argv[0], argv);
   sh_printf("sh: command not found: %s\n", cmd);
 }
