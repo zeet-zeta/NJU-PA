@@ -84,6 +84,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     argv_copy[i] = (char *)ustack_top;
   }
 
+  printf("ustack_top: %p\n", (void *)ustack_top);
+
   ustack_top -= (envc + 1) * sizeof(char *);
   memcpy((void *)ustack_top, envp_copy, envc * sizeof(char *));
   ustack_top -= (argc + 1) * sizeof(char *);
