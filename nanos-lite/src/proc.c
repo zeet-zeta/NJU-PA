@@ -37,6 +37,7 @@ void init_proc() {
   char *argv_example[] = {"pal", "--skip", NULL};
   //数组的指针本身是常量，不能改变指向的地址，但指针指向的结果（字符串内容）可以是常量或非常量，具体取决于如何定义
   context_uload(&pcb[1], "/bin/pal", argv_example, NULL);
+  printf("init_proc\n");
   switch_boot_pcb();
 
   Log("Initializing processes...");
