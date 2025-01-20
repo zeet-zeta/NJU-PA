@@ -6,7 +6,7 @@ void* new_page(size_t nr_page) {
   void *old = pf;
   pf += nr_page * PGSIZE;
   printf("new_page: %p\n", old);
-  return pf;
+  return old;
 }
 
 #ifdef HAS_VME
