@@ -27,8 +27,6 @@ static void sh_handle_cmd(const char *cmd) {
   char line_copy[32];
   strcpy(line_copy, cmd);
   int len = strlen(line_copy);
-  printf("cmd: %s\n", cmd);
-  printf("%d\n", len);
   line_copy[len - 1] = '\0';
   int argc = 0;
   char *argv[16] = {};
