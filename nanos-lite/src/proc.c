@@ -8,7 +8,7 @@ PCB *current = NULL;
 
 extern void naive_uload(PCB *pcb, const char *filename);
 
-void hello_fun(void *arg) {
+static void hello_fun(void *arg) {
   int j = 1;
   while (1) {
     Log("Hello World from Nanos-lite with arg '%d' for the %dth time!", *(int *)arg, j);
@@ -17,7 +17,6 @@ void hello_fun(void *arg) {
   }
 }
 void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
-  printf("context_kload %p\n", entry);
   pcb->cp = kcontext((Area){pcb->stack, pcb + 1}, entry, arg);
 }
 
