@@ -72,8 +72,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   // uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
-  // char **argv_copy = malloc(argc * sizeof(char *));
-  // char **envp_copy = malloc(envc * sizeof(char *));
   char *argv_copy[argc];
   char *envp_copy[envc];
 
