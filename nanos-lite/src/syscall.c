@@ -2,11 +2,19 @@
 #include "syscall.h"
 #include "fs.h"
 #include <sys/time.h>
+#include "proc.h"
 
 int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
   tv->tv_sec = us / 1000000;
   tv->tv_usec = us % 1000000;
+  return 0;
+}
+
+extern void naive_uload(PCB *pcb, const char *filename);
+
+int sys_execve(const char *pathname, const char *argv[], const char *envp[]) {
+  naive_uload(NULL, pathname);
   return 0;
 }
 
@@ -19,7 +27,7 @@ void do_syscall(Context *c) {
 
   switch (a[0]) {
     case SYS_exit:
-      halt(a[1]); c->GPRx = 0; break;
+      naive_uload(NULL, "/bin/menu"); c->GPRx = 0; break;
     case SYS_yield:
       yield(); c->GPRx = 0; break;
     case SYS_write:
@@ -36,6 +44,8 @@ void do_syscall(Context *c) {
       c->GPRx = fs_lseek(a[1], a[2], a[3]); break;
     case SYS_gettimeofday:
       c->GPRx = sys_gettimeofday((struct timeval *)a[1], (struct timezone *)a[2]); break;
+    case SYS_execve:
+      c->GPRx = sys_execve((const char *)a[1], (const char **)a[2], (const char **)a[3]); break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
