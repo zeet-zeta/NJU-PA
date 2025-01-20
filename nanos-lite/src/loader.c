@@ -52,7 +52,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     }
   }
   fs_close(fd);
-  printf("%x\n", ehdr.e_entry);
   return ehdr.e_entry;
 }
 
@@ -68,6 +67,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   while (argv[argc]) argc++;
   int envc = 0;
   while (envp[envc]) envc++;
+  printf("argc = %d envc = %d\n ", argc, envc );
 
   uintptr_t ustack_end = (uintptr_t)new_page(8);
   uintptr_t ustack_top = ustack_end;
