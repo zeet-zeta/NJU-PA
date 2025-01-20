@@ -63,14 +63,14 @@ void naive_uload(PCB *pcb, const char *filename) {
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   uintptr_t entry = loader(pcb, filename);
-  Log("Jump to entry = %p", entry);
+  Log("context_uload: Jump to entry = %p", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   int argc = 0;
   while (argv[argc]) argc++;
   int envc = 0;
   while (envp[envc]) envc++;
 
-printf("argc = %d, envc = %d\n", argc, envc);
+  printf("argc = %d, envc = %d\n", argc, envc);
 
   uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
