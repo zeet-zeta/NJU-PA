@@ -1,6 +1,7 @@
 #include <proc.h>
 #include <elf.h>
 #include "fs.h"
+#include "am.h"
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -60,3 +61,9 @@ void naive_uload(PCB *pcb, const char *filename) {
   ((void(*)())entry) (); //调用刚加载的程序
 }
 
+void context_uload(PCB *pcb, const char *filename) {
+  uintptr_t entry = loader(pcb, filename);
+  Log("Jump to entry = %p", entry);
+  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
+  pcb->cp->GPRx = (uintptr_t)heap.end;
+}

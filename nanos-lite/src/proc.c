@@ -7,6 +7,7 @@ static PCB pcb_boot = {};
 PCB *current = NULL;
 
 extern void naive_uload(PCB *pcb, const char *filename);
+extern void context_uload(PCB *pcb, const char *filename);
 
 void hello_fun(void *arg) {
   int j = 1;
@@ -18,7 +19,6 @@ void hello_fun(void *arg) {
   }
 }
 void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
-  //查看entry的地址
   pcb->cp = kcontext((Area){pcb->stack, pcb + 1}, entry, arg);
 }
 
@@ -34,12 +34,11 @@ void switch_boot_pcb() {
 
 void init_proc() {
   context_kload(&pcb[0], hello_fun, (void *)1);
-  context_kload(&pcb[1], hello_fun, (void *)2);
+  context_uload(&pcb[1], "/bin/pal");
   switch_boot_pcb();
 
   Log("Initializing processes...");
-  yield();
-  naive_uload(NULL, "/bin/menu");
+  
 
   // load program here
 

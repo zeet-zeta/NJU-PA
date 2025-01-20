@@ -68,6 +68,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
   return read_len;
 }
 size_t fs_write(int fd, const void *buf, size_t len) {
+  yield();
   Finfo *cur = &file_table[fd];
   if (cur->write) return cur->write(buf, cur->open_offset, len);
   // assert(cur->open_offset + len <= cur->size);
