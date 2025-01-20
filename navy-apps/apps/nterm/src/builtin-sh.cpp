@@ -23,6 +23,12 @@ static void sh_prompt() {
 }
 
 static void sh_handle_cmd(const char *cmd) {
+  char *line = strchr(cmd, '\n');
+  if (line) *line = '\0';
+  setenv("PATH", "/bin", 0);
+  char *argv[] = {(char *)cmd, NULL};
+  execvp(cmd, argv);
+  sh_printf("sh: command not found: %s\n", cmd);
 }
 
 void builtin_sh_run() {
