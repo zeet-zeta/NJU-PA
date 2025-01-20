@@ -17,6 +17,8 @@ static void hello_fun(void *arg) {
   }
 }
 void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
+  //查看entry的地址
+  printf("entry: %p\n", entry);
   pcb->cp = kcontext((Area){pcb->stack, pcb + 1}, entry, arg);
 }
 
