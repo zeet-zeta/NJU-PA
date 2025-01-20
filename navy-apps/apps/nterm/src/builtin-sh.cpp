@@ -27,7 +27,8 @@ static void sh_handle_cmd(const char *cmd) {
   setenv("PATH", "/bin", 0);
 
   char *line_copy = strdup(cmd);
-  char *line_copy = strchr(cmd, '\n');
+  int len = strlen(line_copy);
+  line_copy[len - 1] = '\0';
   if (line_copy) *line_copy = '\0';
   int argc = 0;
   char *argv[16] = {};
