@@ -13,7 +13,7 @@ void hello_fun(void *arg) {
   int j = 1;
   while (1) {
     //bug的原因在于我尝试*(int *)arg，就会将读取0x00000001的内存，而不是arg的值
-    // printf("Hello! ");
+    printf("Hello! ");
     j ++;
     yield();
   }
