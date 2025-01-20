@@ -32,6 +32,7 @@ static void sh_handle_cmd(const char *cmd) {
   char *argv[16] = {};
   for (char *p = strtok(line_copy, " "); p; p = strtok(NULL, " ")) {
     argv[argc++] = p;
+    printf("p: %s\n", p);
   }
   argv[argc] = NULL;
   execvp(cmd, argv);
