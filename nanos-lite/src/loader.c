@@ -61,9 +61,40 @@ void naive_uload(PCB *pcb, const char *filename) {
   ((void(*)())entry) (); //调用刚加载的程序
 }
 
-void context_uload(PCB *pcb, const char *filename) {
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   uintptr_t entry = loader(pcb, filename);
   Log("Jump to entry = %p", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
-  pcb->cp->GPRx = (uintptr_t)heap.end;
+  int argc = 0;
+  while (argv[argc]) argc++;
+  int envc = 0;
+  while (envp[envc]) envc++;
+
+  uintptr_t ustack_end = (uintptr_t)heap.end;
+  uintptr_t ustack_top = ustack_end;
+  char **argv_copy = malloc(argc * sizeof(char *));
+  char **envp_copy = malloc(envc * sizeof(char *));
+
+  for (int i = envc - 1; i >= 0; i--) {
+    ustack_top -= strlen(envp[i]) + 1; // '\0'
+    strcpy((char *)ustack_top, envp[i]);
+    envp_copy[i] = (char *)ustack_top;
+  }
+  for (int i = argc - 1; i >= 0; i--) {
+    ustack_top -= strlen(argv[i]) + 1; // '\0'
+    strcpy((char *)ustack_top, argv[i]);
+    argv_copy[i] = (char *)ustack_top;
+  }
+
+  ustack_top -= (envc + 1) * sizeof(char *);
+  memcpy((void *)ustack_top, envp_copy, envc * sizeof(char *));
+  ustack_top -= (argc + 1) * sizeof(char *);
+  memcpy((void *)ustack_top, argv_copy, argc * sizeof(char *));
+  
+
+  ustack_top -= sizeof(int);
+  *(int *)ustack_top = argc;
+  pcb->cp->GPRx = ustack_top;
+  free(argv_copy);
+  free(envp_copy);
 }
