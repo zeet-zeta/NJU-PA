@@ -75,7 +75,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     envc = 0;
   } else {
     printf("look here\n");
-    printf("%s\n", envp[0]);
+    if (envp[0] == NULL) printf("NULL\n");
+    else printf("%s\n", envp[0]);
     while (envp[envc] != NULL) envc++;
   }
 
