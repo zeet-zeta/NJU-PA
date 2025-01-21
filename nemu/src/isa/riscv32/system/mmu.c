@@ -17,6 +17,17 @@
 #include <memory/vaddr.h>
 #include <memory/paddr.h>
 
+#define PTE_V 0x1
+
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-  return MEM_RET_FAIL;
+  word_t satp = cpu.satp;
+  paddr_t root_ppn = satp << 12;
+  paddr_t first_pte_addr = root_ppn + ((vaddr >> 22) << 2);
+  word_t first_pte = paddr_read(first_pte_addr, 4);
+  assert(first_pte & PTE_V);
+  paddr_t second_pte_addr = (first_pte >> 10 << 12) + ((vaddr >> 12 & 0x3ff) << 2);
+  word_t second_pte = paddr_read(second_pte_addr, 4);
+  assert(second_pte & PTE_V);
+  paddr_t paddr = (second_pte >> 10 << 12) + (vaddr & 0xfff);
+  return paddr;
 }

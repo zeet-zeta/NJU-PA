@@ -36,6 +36,7 @@ word_t *isa_csr_translate(word_t csr_addr) {
     case 0x300: return &cpu.mstatus;
     case 0x341: return &cpu.mepc;
     case 0x342: return &cpu.mcause;
+    case 0x180: return &cpu.satp;
     default: Assert(0, "unrecognized CSR: %x", csr_addr);
   }
 }

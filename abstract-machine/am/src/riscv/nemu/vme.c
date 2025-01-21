@@ -13,6 +13,7 @@ static Area segments[] = {      // Kernel memory mappings
 
 #define USER_SPACE RANGE(0x40000000, 0x80000000)
 
+//指向页表基地址
 static inline void set_satp(void *pdir) {
   uintptr_t mode = 1ul << (__riscv_xlen - 1);
   asm volatile("csrw satp, %0" : : "r"(mode | ((uintptr_t)pdir >> 12)));
@@ -28,13 +29,13 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
   pgalloc_usr = pgalloc_f;
   pgfree_usr = pgfree_f;
 
-  kas.ptr = pgalloc_f(PGSIZE);
+  kas.ptr = pgalloc_f(PGSIZE); //页表基地址
 
   int i;
   for (i = 0; i < LENGTH(segments); i ++) {
     void *va = segments[i].start;
     for (; va < segments[i].end; va += PGSIZE) {
-      map(&kas, va, va, 0);
+      map(&kas, va, va, 0); //映射内核空间，恒等映射
     }
   }
 
@@ -44,6 +45,7 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
   return true;
 }
 
+//创一个用户程序的页，将内核空间映射到用户空间
 void protect(AddrSpace *as) {
   PTE *updir = (PTE*)(pgalloc_usr(PGSIZE));
   as->ptr = updir;
@@ -66,7 +68,41 @@ void __am_switch(Context *c) {
   }
 }
 
+/*
+  Virtual Address           |  VPN[1]  |  VPN[0]  |   offset   |  -----> 32 bits
+                            +----------+----------+------------+
+                             (10 bits)  (10 bits)    (12 bits)
+
+  Physical Address        +------------+----------+------------+
+                          |   PPN[1]   |  PPN[0]  |   offset   |  -----> 34 bits
+                          +------------+----------+------------+
+                             (12 bits)   (10 bits)    (12 bits)
+
+                    +------------+----------+--+-+-+-+-+-+-+-+-+
+  Page Table Entry  |   PPN[1]   |  PPN[0]  |  |D|A|G|U|X|W|R|V|  -----> 32 bits
+                    +------------+----------+--+-+-+-+-+-+-+-+-+
+                       (12 bits)   (10 bits) |
+                                             `- RSW (2 bits)
+*/
+
+static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
+  PTE *pgdir = (PTE *)as->ptr;
+  for (int level = 1; level >= 0; level--) {
+    int idx = ((uint32_t)va >> (12 + 10 * (level - 1))) & 0x3ff;
+    if (level == 1 && (pgdir[idx * 4] & PTE_V) == 0) { //缺页
+      void *new = pgalloc_usr(PGSIZE);
+      pgdir[idx * 4] = ((uintptr_t)new >> 2) | prot;
+    }
+    pgdir = (PTE *)((pgdir[idx * 4] & ~0x3ff) << 2);
+  }
+  return pgdir;
+}
+
+
+//用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
 void map(AddrSpace *as, void *va, void *pa, int prot) {
+  PTE *pgdir = page_walk(as, va, prot);
+  *pgdir = (((uintptr_t)pa & ~0xfff) >> 2) | prot;  
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
