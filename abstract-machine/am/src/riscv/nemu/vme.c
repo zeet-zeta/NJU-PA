@@ -93,7 +93,7 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
-  printf("first_pte: %x \n", *first_pte);
+  printf("first_pte: %x ", *first_pte);
   PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
 }
@@ -105,7 +105,8 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
-  printf("va: %p -> pa: %p ", va, pa);
+  printf("second_pte: %x ", *pgdir);
+  printf("va: %p -> pa: %p \n", va, pa);
 }
 
 
