@@ -99,11 +99,12 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
 
 //用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
 void map(AddrSpace *as, void *va, void *pa, int prot) {
-  printf("hhhhhh");
+  printf("map start ");
   va = (void *)((uintptr_t)va & ~0xfff);
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
+  printf("map end ");
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
