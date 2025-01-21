@@ -92,17 +92,8 @@ void __am_switch(Context *c) {
 #define PGT2_ID(val) ((val & 0x3fffff) >> 12)
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-    // PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
-    // if (!(*pte_1 & PTE_V)) {
-    //     void *allocated_page = pgalloc_usr(PGSIZE);
-    //     // 构造 PTE
-    //     *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
-    // }
-  //   PTE *pte_2 = (PTE *)((PTE_PPN(*pte1) << 12) + PGT2_ID((uintptr_t)va) * 4);
-  // return pte_2;
 
-  PTE *root_pte = (PTE *)as->ptr;
-  PTE *first_pte = root_pte + ((uintptr_t)va >> 22 << 2);
+  PTE *first_pte = as->ptr + ((uintptr_t)va >> 22) * 2;
   PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
   assert(first_pte == pte_1);
   if (!(*first_pte & PTE_V)) { //缺页
