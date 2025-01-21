@@ -23,7 +23,6 @@ int main() {
   init_irq();
 #endif
 
-  printf("hahah");
   init_fs();
 
   init_proc();
