@@ -93,15 +93,23 @@ void __am_switch(Context *c) {
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
 
-  PTE *first_pte = as->ptr + ((uintptr_t)va >> 22) * 4;
+  // PTE *first_pte = as->ptr + ((uintptr_t)va >> 22) * 4;
+  // PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
+  // assert(*first_pte == *pte_1);
+  // if (!(*first_pte & PTE_V)) { //缺页
+  //   void *new = pgalloc_usr(PGSIZE);
+  //   *first_pte = ((uintptr_t)new >> 2) | prot;
+  // }
+  // PTE *second_pte = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) + ((((uintptr_t)va >> 12) & 0x3ff) * 4);
+  // return second_pte;
   PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
-  assert(*first_pte == *pte_1);
-  if (!(*first_pte & PTE_V)) { //缺页
-    void *new = pgalloc_usr(PGSIZE);
-    *first_pte = ((uintptr_t)new >> 2) | prot;
+  if (!(*pte_1 & PTE_V)) {
+      void *allocated_page = pgalloc_usr(PGSIZE);
+      // 构造 PTE
+      *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
   }
-  PTE *second_pte = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) + ((((uintptr_t)va >> 12) & 0x3ff) * 4);
-  return second_pte;
+  PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
+  return pte_2;
   
 }
 
