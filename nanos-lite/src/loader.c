@@ -104,6 +104,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     void *pa = new_page(1);
     map(&as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
+  printf("here?");
 
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   int argc = 0;
@@ -121,8 +122,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     // else printf("%s\n", envp[0]);
     while (envp[envc] != NULL) envc++;
   }
-
-  printf("why\n");
 
   uintptr_t ustack_end = va_end;
   // uintptr_t ustack_end = (uintptr_t)heap.end;
