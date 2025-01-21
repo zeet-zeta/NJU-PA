@@ -104,7 +104,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
-  // printf("va: %p -> pa: %p ", va, pa);
+  printf("va: %p -> pa: %p ", va, pa);
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
