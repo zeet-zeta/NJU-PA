@@ -93,7 +93,6 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
-  printf("hello ");
 
   uintptr_t va_end = (uintptr_t)as.area.end;
   uintptr_t va_start = va_end - 32 * 1024;
@@ -101,8 +100,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     void *pa = new_page(1);
     map(&as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
-
-  printf("clode hell");
 
   int argc = 0;
   if (argv == NULL) {
@@ -120,31 +117,26 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     while (envp[envc] != NULL) envc++;
   }
 
-  printf("hsdkal ");
-
   uintptr_t ustack_end = va_end;
   // uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
   char *argv_copy[argc];
   char *envp_copy[envc];
-  printf("%d %d\n", argc, envc);
   for (int i = envc - 1; i >= 0; i--) {
     ustack_top -= strlen(envp[i]) + 1; // '\0'
     strcpy((char *)ustack_top, envp[i]);
     envp_copy[i] = (char *)ustack_top;
   }
-  printf("why");
   for (int i = argc - 1; i >= 0; i--) {
     printf("sss");
     ustack_top -= strlen(argv[i]) + 1; // '\0'
-    printf("saaa");
+    printf("%p ", ustack_top);
     strcpy((char *)ustack_top, argv[i]);
     printf("www");
     argv_copy[i] = (char *)ustack_top;
   }
 
-  printf("hhafkahf "); 
   ustack_top -= (envc + 1) * sizeof(char *);
   memcpy((void *)ustack_top, envp_copy, envc * sizeof(char *));
   ustack_top -= (argc + 1) * sizeof(char *);
@@ -152,7 +144,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
-  printf("begin to loader");
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
