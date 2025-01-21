@@ -128,7 +128,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
   char *argv_copy[argc];
   char *envp_copy[envc];
-  // printf("%d %d\n", argc, envc);
+  printf("%d %d\n", argc, envc);
   for (int i = envc - 1; i >= 0; i--) {
     ustack_top -= strlen(envp[i]) + 1; // '\0'
     strcpy((char *)ustack_top, envp[i]);
