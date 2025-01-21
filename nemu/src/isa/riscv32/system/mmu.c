@@ -20,7 +20,6 @@
 #define PTE_V 0x1
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-  printf("vaddr = %x\n", vaddr);
   word_t satp = cpu.satp;
   paddr_t root_ppn = satp << 12;
   paddr_t first_pte_addr = root_ppn + ((vaddr >> 22) << 2);
