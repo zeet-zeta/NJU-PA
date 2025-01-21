@@ -88,12 +88,12 @@ void __am_switch(Context *c) {
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *root_pte = (PTE *)as->ptr;
-  PTE *fist_pte = root_pte + ((((uintptr_t)va >> 22) & 0x3ff) << 2);
+  PTE *fist_pte = root_pte + ((uintptr_t)va >> 22 << 2);
   if ((*fist_pte & PTE_V) == 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *fist_pte = ((uintptr_t)new >> 2) | prot;
   }
-  PTE *second_pte = (PTE *)((*fist_pte & ~0x3ff) << 2) + ((((uint32_t)va >> 12) & 0x3ff) << 2);
+  PTE *second_pte = (PTE *)((*fist_pte & ~0x3ff) << 2) + ((((uintptr_t)va >> 12) & 0x3ff) << 2);
   return second_pte;
 }
 
