@@ -42,16 +42,13 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
 
   fs_read(fd, &ehdr, sizeof(Elf_Ehdr));
-  // ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
   assert(*(uint32_t *)ehdr.e_ident == 0x464c457f);
   assert(ehdr.e_machine == EXPECT_TYPE);
 
   for (int i = 0; i < ehdr.e_phnum; i++) {
-    // ramdisk_read(&phdr, ehdr.e_phoff + i * ehdr.e_phentsize, sizeof(Elf_Phdr));
     fs_lseek(fd, ehdr.e_phoff + i * ehdr.e_phentsize, SEEK_SET);
     fs_read(fd, &phdr, sizeof(Elf_Phdr));
     if (phdr.p_type == PT_LOAD) {
-      // ramdisk_read((void *)phdr.p_vaddr, phdr.p_offset, phdr.p_filesz);
       uintptr_t va = phdr.p_vaddr;
       size_t filesz = phdr.p_filesz;
       size_t memsz = phdr.p_memsz;
@@ -69,6 +66,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         filesz -= read_size;
         memsz -= PGSIZE;
       }
+      printf("hello");
       if (memsz > 0) {
         void *pa = new_page(1);
         map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
@@ -94,19 +92,16 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
-  printf("hell?");
 
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
 
-  printf("here!\n");
   uintptr_t va_end = (uintptr_t)as.area.end;
   uintptr_t va_start = va_end - 32 * 1024;
   for (uintptr_t va = va_start; va < va_end; va += PGSIZE) {
     void *pa = new_page(1);
     map(&as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
-  printf("here?");
 
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   int argc = 0;
