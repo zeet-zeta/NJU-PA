@@ -94,7 +94,6 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
-  printf("hah");
 
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
@@ -122,6 +121,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     // else printf("%s\n", envp[0]);
     while (envp[envc] != NULL) envc++;
   }
+
+  printf("why\n");
 
   uintptr_t ustack_end = va_end;
   // uintptr_t ustack_end = (uintptr_t)heap.end;
