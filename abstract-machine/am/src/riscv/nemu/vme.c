@@ -107,7 +107,7 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
       void *allocated_page = pgalloc_usr(PGSIZE);
       *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
   }
-  PTE *pte_2 = (PTE *)((((*pte_1) & PTE_PPN_MASK) >> 10 << 12) + (((uintptr_t)va >> 12) & 0x3ff) * 4);
+  PTE *pte_2 = (PTE *)((((*pte_1) ) >> 10 << 12) + (((uintptr_t)va >> 12) & 0x3ff) * 4);
   return pte_2;
   
 }
