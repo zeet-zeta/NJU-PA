@@ -86,45 +86,45 @@ void __am_switch(Context *c) {
                                              `- RSW (2 bits)
 */
 
-// static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-//   PTE *pgdir = (PTE *)as->ptr;
-//   for (int level = 1; level >= 0; level--) {
-//     int idx = ((uint32_t)va >> (12 + 10 * (level - 1))) & 0x3ff;
-//     if (level == 1 && (pgdir[idx * 4] & PTE_V) == 0) { //缺页
-//       void *new = pgalloc_usr(PGSIZE);
-//       pgdir[idx * 4] = ((uintptr_t)new >> 2) | prot;
-//     }
-//     pgdir = (PTE *)((pgdir[idx * 4] & ~0x3ff) << 2);
-//   }
-//   return pgdir;
-// }
-
-
-// //用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
-// void map(AddrSpace *as, void *va, void *pa, int prot) {
-//   PTE *pgdir = page_walk(as, va, prot);
-//   *pgdir = (((uintptr_t)pa & ~0xfff) >> 2) | prot;  
-// }
-
-#define PTE_PPN_MASK (0xFFFFFC00u)
-#define PTE_PPN(x) (((x) & PTE_PPN_MASK) >> 10)
-#define PGT1_ID(val) (val >> 22)
-#define PGT2_ID(val) ((val & 0x3fffff) >> 12)
-
-void map(AddrSpace *as, void *va, void *pa, int prot) {
-    va = (void *)((int)va & ~0xfff);
-    pa = (void *)((int)pa & ~0xfff);
-    PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;          // 与 4 做乘法，va 需要从 void * 转成 uint 或 int
-    if (!(*pte_1 & PTE_V)) {
-        void *allocated_page = pgalloc_usr(PGSIZE);
-        // 构造 PTE
-        *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;  //  | PTE_V 也可以, 但我觉得不规范
+static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
+  PTE *pgdir = (PTE *)as->ptr;
+  for (int level = 1; level >= 0; level--) {
+    int idx = ((uint32_t)va >> (12 + 10 * (level - 1))) & 0x3ff;
+    if (level == 1 && (pgdir[idx * 4] & PTE_V) == 0) { //缺页
+      void *new = pgalloc_usr(PGSIZE);
+      pgdir[idx * 4] = ((uintptr_t)new >> 2) | prot;
     }
-    PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
-    // 构造PTE，pa 的低 12 位在开始就已清零，现在创建 22 位的 PPN，往右移动 2 位。然后构造低 10 位的控制位
-    //*pte_2 = ((uintptr_t)pa >> 2) | PTE_V | PTE_R | PTE_W | PTE_X | (prot ? PTE_U : 0);
-    *pte_2 = ((uintptr_t)pa >> 2) | prot;
+    pgdir = (PTE *)((pgdir[idx * 4] & ~0x3ff) << 2);
+  }
+  return pgdir;
 }
+
+
+//用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
+void map(AddrSpace *as, void *va, void *pa, int prot) {
+  PTE *pgdir = page_walk(as, va, prot);
+  *pgdir = (((uintptr_t)pa & ~0xfff) >> 2) | prot;  
+}
+
+// #define PTE_PPN_MASK (0xFFFFFC00u)
+// #define PTE_PPN(x) (((x) & PTE_PPN_MASK) >> 10)
+// #define PGT1_ID(val) (val >> 22)
+// #define PGT2_ID(val) ((val & 0x3fffff) >> 12)
+
+// void map(AddrSpace *as, void *va, void *pa, int prot) {
+//     va = (void *)((int)va & ~0xfff);
+//     pa = (void *)((int)pa & ~0xfff);
+//     PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;          // 与 4 做乘法，va 需要从 void * 转成 uint 或 int
+//     if (!(*pte_1 & PTE_V)) {
+//         void *allocated_page = pgalloc_usr(PGSIZE);
+//         // 构造 PTE
+//         *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;  //  | PTE_V 也可以, 但我觉得不规范
+//     }
+//     PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
+//     // 构造PTE，pa 的低 12 位在开始就已清零，现在创建 22 位的 PPN，往右移动 2 位。然后构造低 10 位的控制位
+//     //*pte_2 = ((uintptr_t)pa >> 2) | PTE_V | PTE_R | PTE_W | PTE_X | (prot ? PTE_U : 0);
+//     *pte_2 = ((uintptr_t)pa >> 2) | prot;
+// }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *c = (Context *)((uint8_t *)kstack.end - sizeof(Context));
