@@ -91,6 +91,7 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   printf("walk start ");
   if ((*first_pte & PTE_V) == 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
+    printf("walk mid ");
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
   printf("walk end ");
