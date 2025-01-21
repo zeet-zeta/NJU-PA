@@ -94,8 +94,6 @@ void __am_switch(Context *c) {
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
 
   PTE *first_pte = as->ptr + ((uintptr_t)va >> 22) * 4;
-  PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
-  assert(*first_pte == *pte_1);
   if (!(*first_pte & PTE_V)) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = ((uintptr_t)new >> 2) | prot;
