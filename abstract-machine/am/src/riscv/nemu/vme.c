@@ -88,15 +88,10 @@ void __am_switch(Context *c) {
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
-  printf("walk start ");
-  printf("%p ", first_pte);
   if ((*first_pte & PTE_V) == 0) { //缺页
-    printf("lack ");
     void *new = pgalloc_usr(PGSIZE);
-    printf("walk mid ");
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
-  printf("walk end ");
   PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
 }
