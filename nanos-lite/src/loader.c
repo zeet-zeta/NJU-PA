@@ -98,6 +98,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
 
+  printf("here!\n");
   uintptr_t va_end = (uintptr_t)as.area.end;
   uintptr_t va_start = va_end - 32 * 1024;
   for (uintptr_t va = va_start; va < va_end; va += PGSIZE) {
