@@ -120,6 +120,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     while (envp[envc] != NULL) envc++;
   }
 
+  printf("hsdkal ");
+
   uintptr_t ustack_end = va_end;
   // uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
