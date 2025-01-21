@@ -93,8 +93,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   AddrSpace as = pcb->as;
   protect(&as);
 
-  uintptr_t entry = loader(pcb, filename);
-  printf("entry: %x\n", entry);
 
   uintptr_t va_end = (uintptr_t)as.area.end;
   uintptr_t va_start = va_end - 32 * 1024;
@@ -103,7 +101,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     map(&as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
 
-  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   int argc = 0;
   if (argv == NULL) {
     argc = 0;
@@ -145,5 +142,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
+  uintptr_t entry = loader(pcb, filename);
+  printf("entry: %x\n", entry);
+  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   pcb->cp->GPRx = ustack_top;
 }
