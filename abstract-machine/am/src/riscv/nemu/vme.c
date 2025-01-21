@@ -15,7 +15,9 @@ static Area segments[] = {      // Kernel memory mappings
 
 //指向页表基地址
 static inline void set_satp(void *pdir) {
+  
   uintptr_t mode = 1ul << (__riscv_xlen - 1);
+  printf("set base addr: %p \n", pdir);
   asm volatile("csrw satp, %0" : : "r"(mode | ((uintptr_t)pdir >> 12)));
 }
 
@@ -103,7 +105,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
-  printf("va: %p -> pa: %p ", va, pa);
+  // printf("va: %p -> pa: %p ", va, pa);
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
