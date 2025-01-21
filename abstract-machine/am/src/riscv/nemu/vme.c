@@ -92,14 +92,14 @@ void __am_switch(Context *c) {
 #define PGT2_ID(val) ((val & 0x3fffff) >> 12)
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-    PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;          // 与 4 做乘法，va 需要从 void * 转成 uint 或 int
+    PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
     if (!(*pte_1 & PTE_V)) {
         void *allocated_page = pgalloc_usr(PGSIZE);
         // 构造 PTE
-        *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;  //  | PTE_V 也可以, 但我觉得不规范
+        *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
     }
-    PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
-    return pte_2;
+    // PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
+    // return pte_2;
 
   // PTE *root_pte = (PTE *)as->ptr;
   // PTE *fist_pte = root_pte + ((uintptr_t)va >> 22 << 2);
@@ -107,8 +107,8 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   //   void *new = pgalloc_usr(PGSIZE);
   //   *fist_pte = ((uintptr_t)new >> 2) | prot;
   // }
-  // PTE *second_pte = (PTE *)((*fist_pte & ~0x3ff) << 2) + ((((uintptr_t)va >> 12) & 0x3ff) << 2);
-  // return second_pte;
+  PTE *second_pte = (PTE *)((*pte_1 & ~0x3ff) << 2) + ((((uintptr_t)va >> 12) & 0x3ff) << 2);
+  return second_pte;
 }
 
 
