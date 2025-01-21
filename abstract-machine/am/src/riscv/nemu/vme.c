@@ -88,10 +88,12 @@ void __am_switch(Context *c) {
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
+  printf("walk start ");
   if ((*first_pte & PTE_V) == 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
+  printf("walk end ");
   PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
 }
@@ -99,13 +101,10 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
 
 //用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
 void map(AddrSpace *as, void *va, void *pa, int prot) {
-  printf("map start ");
   va = (void *)((uintptr_t)va & ~0xfff);
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
-  printf("map mid ");
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
-  printf("map end ");
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
