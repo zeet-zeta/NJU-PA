@@ -103,6 +103,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   va = (void *)((uintptr_t)va & ~0xfff);
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
+  printf("map mid ");
   *pgdir = (((uintptr_t)pa) >> 2) | prot;
   printf("map end ");
 }
