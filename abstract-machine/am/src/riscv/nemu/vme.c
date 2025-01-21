@@ -89,7 +89,7 @@ void __am_switch(Context *c) {
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *root_pte = (PTE *)as->ptr;
   PTE *fist_pte = root_pte + ((uintptr_t)va >> 22 << 2);
-  if ((*fist_pte & PTE_V) == 0) { //缺页
+  if (!(*fist_pte & PTE_V)) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *fist_pte = ((uintptr_t)new >> 2) | prot;
   }
