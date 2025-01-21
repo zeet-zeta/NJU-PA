@@ -111,9 +111,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   if (envp == NULL) {
     envc = 0;
   } else {
-    // printf("look here\n");
-    // if (envp[0] == NULL) printf("NULL\n");
-    // else printf("%s\n", envp[0]);
     while (envp[envc] != NULL) envc++;
   }
 
@@ -132,6 +129,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     printf("sss");
     ustack_top -= strlen(argv[i]) + 1; // '\0'
     printf("%p ", ustack_top);
+    printf("%c ", *(char *)ustack_top);
     strcpy((char *)ustack_top, argv[i]);
     printf("www");
     argv_copy[i] = (char *)ustack_top;
