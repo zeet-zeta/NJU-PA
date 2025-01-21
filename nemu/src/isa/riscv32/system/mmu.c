@@ -24,7 +24,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   paddr_t root_ppn = satp << 12;
   paddr_t first_pte_addr = root_ppn + ((vaddr >> 22) << 2);
   word_t first_pte = paddr_read(first_pte_addr, 4);
-  Assert(first_pte & PTE_V, "vaddr = %x ", vaddr);
+  Assert(first_pte & PTE_V, "vaddr = %x first_pte = %x", vaddr, first_pte_addr);
   paddr_t second_pte_addr = (first_pte >> 10 << 12) + ((vaddr >> 12 & 0x3ff) << 2);
   word_t second_pte = paddr_read(second_pte_addr, 4);
   assert(second_pte & PTE_V);
