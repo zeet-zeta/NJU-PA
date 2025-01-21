@@ -98,8 +98,8 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
-  PTE *second_pte = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) ;
-  PTE *pte_2 = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) ;
+  PTE *second_pte = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) + ((((uintptr_t)va >> 12) & 0x3ff) * 4);
+  PTE *pte_2 = (PTE *)(((*first_pte) & PTE_PPN_MASK) >> 10 << 12) + PGT2_ID((uintptr_t)va) * 4;
   assert(*second_pte == *pte_2);
   return second_pte;
   
