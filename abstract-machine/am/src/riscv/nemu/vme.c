@@ -42,7 +42,6 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
   }
 
   set_satp(kas.ptr);
-  printf("%p\n", get_satp());
   vme_enable = 1;
 
   return true;
@@ -88,29 +87,46 @@ void __am_switch(Context *c) {
                                              `- RSW (2 bits)
 */
 
-static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-  PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
-  if ((*first_pte & PTE_V) == 0) { //缺页
-    void *new = pgalloc_usr(PGSIZE);
-    *first_pte = ((uintptr_t)new >> 2) | prot;
-  }
-  PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
-  return second_pte;
-}
+// static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
+//   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
+//   if ((*first_pte & PTE_V) == 0) { //缺页
+//     void *new = pgalloc_usr(PGSIZE);
+//     *first_pte = ((uintptr_t)new >> 2) | prot;
+//   }
+//   PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
+//   return second_pte;
+// }
 
 
-//用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
-void map(AddrSpace *as, void *va, void *pa, int prot) {
-  va = (void *)((uintptr_t)va & ~0xfff);
-  pa = (void *)((uintptr_t)pa & ~0xfff);
-  PTE *pgdir = page_walk(as, va, prot);
-  *pgdir = (((uintptr_t)pa) >> 2) | prot;
-  // printf("va: %p -> pa: %p ", va, pa);
-}
+// //用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
+// void map(AddrSpace *as, void *va, void *pa, int prot) {
+//   va = (void *)((uintptr_t)va & ~0xfff);
+//   pa = (void *)((uintptr_t)pa & ~0xfff);
+//   PTE *pgdir = page_walk(as, va, prot);
+//   *pgdir = (((uintptr_t)pa) >> 2) | prot;
+//   // printf("va: %p -> pa: %p ", va, pa);
+// }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *c = (Context *)((uint8_t *)kstack.end - sizeof(Context));
   c->mepc = (uintptr_t)entry;
   c->pdir = (void *)as;
   return c;
+}
+
+#define PTE_PPN_MASK (0xFFFFFC00u)
+#define PTE_PPN(x) (((x) & PTE_PPN_MASK) >> 10)
+#define PGT1_ID(val) (val >> 22)
+#define PGT2_ID(val) ((val & 0x3fffff) >> 12)
+
+void map(AddrSpace *as, void *va, void *pa, int prot) {
+    va = (void *)((int)va & ~0xfff);
+    pa = (void *)((int)pa & ~0xfff);
+    PTE *pte_1 = as->ptr + PGT1_ID((uintptr_t)va) * 4;
+    if (!(*pte_1 & PTE_V)) {
+        void *allocated_page = pgalloc_usr(PGSIZE);
+        *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
+    }
+    PTE *pte_2 = (PTE *)((PTE_PPN(*pte_1) << 12) + PGT2_ID((uintptr_t)va) * 4);
+    *pte_2 = ((uintptr_t)pa >> 2) | prot;
 }
