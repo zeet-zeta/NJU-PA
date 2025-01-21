@@ -143,6 +143,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
+  printf("begin to loader");
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
