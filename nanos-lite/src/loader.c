@@ -53,13 +53,13 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       size_t filesz = phdr.p_filesz;
       size_t memsz = phdr.p_memsz;
       size_t offset = phdr.p_offset;
-      printf("hello?");
 
       while (filesz > 0) {
         void *pa = new_page(1);
         map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
         size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
         fs_lseek(fd, offset, SEEK_SET);
+        printf("hi");
         fs_read(fd, pa, read_size);
 
         va += PGSIZE;
