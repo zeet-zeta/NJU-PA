@@ -86,29 +86,14 @@ void __am_switch(Context *c) {
                                              `- RSW (2 bits)
 */
 
-#define PTE_PPN_MASK (0xFFFFFC00u)
-#define PTE_PPN(x) (((x) & PTE_PPN_MASK) >> 10)
-#define PGT1_ID(val) (val >> 22)
-#define PGT2_ID(val) ((val & 0x3fffff) >> 12)
-
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-
   PTE *first_pte = as->ptr + ((uintptr_t)va >> 22) * 4;
-  if (!(*first_pte & PTE_V)) { //缺页
+  if ((*first_pte & PTE_V) != 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = ((uintptr_t)new >> 2) | prot;
   }
   PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12) + (((uintptr_t)va >> 12) & 0x3ff) * 4);
   return second_pte;
-
-  // PTE *pte_1 = as->ptr + ((uintptr_t)va >> 22) * 4;
-  // if (!(*pte_1 & PTE_V)) {
-  //     void *allocated_page = pgalloc_usr(PGSIZE);
-  //     *pte_1 = ((uintptr_t)allocated_page >> 2) | prot;
-  // }
-  // PTE *pte_2 = (PTE *)(((*pte_1 ) >> 10 << 12) + (((uintptr_t)va >> 12) & 0x3ff) * 4);
-  // return pte_2;
-  
 }
 
 
