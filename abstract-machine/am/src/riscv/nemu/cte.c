@@ -51,7 +51,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   //Area [start, end)
   Context *c = (Context *)((uint8_t *)kstack.end - sizeof(Context));
   c->mepc = (uintptr_t)entry;
-  c->mstatus = 0x80;
+  c->mstatus = 1L << 7;
   c->GPR2 = (uintptr_t)arg; //给f函数传参
   c->pdir = NULL;
   return c;
