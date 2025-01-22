@@ -70,6 +70,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         filesz -= read_len;
         memsz -= read_len;
       }
+      printf("---unalign---\n");
 
       while (filesz > 0) {
         pa = new_page(1);
@@ -80,7 +81,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         filesz -= read_len;
         memsz -= read_len;
       }
-      printf("-------\n");
+      printf("---mid----\n");
 
       if (read_len + memsz > PGSIZE) {
         memsz -= PGSIZE - read_len;
@@ -91,6 +92,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           memsz -= PGSIZE;
         }
       }
+      printf("---tail---\n");
       pcb->max_brk = va;
     }
   }
