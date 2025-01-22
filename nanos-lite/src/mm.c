@@ -27,13 +27,22 @@ void free_page(void *p) {
 }
 
 /* The brk() system call handler. */
+// int mm_brk(uintptr_t brk) {
+//   for (; current->max_brk < brk; current->max_brk += PGSIZE) {
+//     void *pa = new_page(1);
+//     map(&current->as, (void *)current->max_brk, pa, 1);
+//     // printf("brk: %p -> %p\n", current->max_brk, pa);
+//   }
+//   return 0;
+// }
+
 int mm_brk(uintptr_t brk) {
-  for (; current->max_brk < brk; current->max_brk += PGSIZE) {
-    void *pa = new_page(1);
-    map(&current->as, (void *)current->max_brk, pa, 1);
-    // printf("brk: %p -> %p\n", current->max_brk, pa);
-  }
-  return 0;
+    if (brk <= current->max_brk)
+        return 0;
+    for (; current->max_brk < brk; current->max_brk += PGSIZE) {
+        map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), 1);
+    }
+    return 0;
 }
 
 void init_mm() {
