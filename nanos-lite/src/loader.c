@@ -105,6 +105,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     map(as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
 
+  yield();
+
   int argc = 0;
   if (argv == NULL) {
     argc = 0;
