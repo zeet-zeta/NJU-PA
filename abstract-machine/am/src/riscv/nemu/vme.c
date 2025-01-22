@@ -109,23 +109,6 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   printf("va: %p -> pa: %p \n", va, pa);
 }
 
-// void map(AddrSpace *as, void *va, void *pa, int prot) {
-//   // printf("as->pdir:%p\n", as->ptr);
-//   uint32_t vpn = (uint32_t)va >> 12;
-//   uint32_t vpn1 = vpn >> 10;
-//   uint32_t vpn0 = vpn & (0x3ff);
-//   // assert(0);
-//   if ((((uint32_t *)(as->ptr))[vpn1] & 1) == 0) {
-//     ((uint32_t *)(as->ptr))[vpn1] =
-//         ((uint32_t)pgalloc_usr(PGSIZE) & ~(PGSIZE - 1)) | 1;
-//   }
-
-//   ((uint32_t *)((uint32_t)((uint32_t *)(as->ptr))[vpn1] &
-//                 ~(PGSIZE - 1)))[vpn0] = ((uint32_t)pa & ~(PGSIZE - 1)) | 1;
-// }
-
-
-
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *c = (Context *)((uint8_t *)kstack.end - sizeof(Context));
   c->mepc = (uintptr_t)entry;
