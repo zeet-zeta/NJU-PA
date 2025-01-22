@@ -75,17 +75,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           va += PGSIZE;
           memsz -= PGSIZE;
         }
-        // printf("memsz: %d\n", memsz);
-        // void *pa = new_page(1);
-        // map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-        // memset(pa, 0, PGSIZE);
       }
-
-      // fs_lseek(fd, phdr.p_offset, SEEK_SET);
-      // fs_read(fd, (void *)phdr.p_vaddr, phdr.p_filesz);
-      // if (phdr.p_filesz < phdr.p_memsz) {
-      //   memset((void *)(phdr.p_vaddr + phdr.p_filesz), 0, phdr.p_memsz - phdr.p_filesz);
-      // }
     }
   }
   fs_close(fd);
