@@ -56,10 +56,10 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
       while (filesz > 0) {
         void *pa = new_page(1);
+        map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
         size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
         fs_lseek(fd, offset, SEEK_SET);
         fs_read(fd, pa, read_size);
-        map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
 
         va += PGSIZE;
         offset += PGSIZE;
@@ -94,9 +94,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   // 大错特错，这里的as是pcb->as的一个副本
   AddrSpace *as = &pcb->as;
   protect(as);
-  uintptr_t entry = loader(pcb, filename);
-  printf("entry: %x\n", entry);
-  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
+
 
   uintptr_t va_end = (uintptr_t)as->area.end;
   uintptr_t va_start = va_end - 32 * 1024;
@@ -146,5 +144,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
+  uintptr_t entry = loader(pcb, filename);
+  printf("entry: %x\n", entry);
+  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   pcb->cp->GPRx = ustack_top;
 }
