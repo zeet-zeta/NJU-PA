@@ -93,6 +93,7 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
+  printf("as: %p\n", as.ptr);
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
