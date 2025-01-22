@@ -39,7 +39,6 @@ void switch_boot_pcb() {
 
 void init_proc() {
   context_kload(&pcb[0], hello_fun, (void *)1);
-  printf("pcb[0] %p\n", pcb[0].cp->pdir);
   
   char *argv_example[] = {"/bin/pal", NULL};
   char *envp_example[] = {NULL};
