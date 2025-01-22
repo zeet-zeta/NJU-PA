@@ -100,6 +100,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
 
   uintptr_t va_end = (uintptr_t)as->area.end;
   uintptr_t va_start = va_end - 32 * 1024;
+  void *pa_start = new_page(1);
   for (uintptr_t va = va_start; va < va_end; va += PGSIZE) {
     void *pa = new_page(1);
     map(as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
@@ -118,7 +119,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     while (envp[envc] != NULL) envc++;
   }
 
-  uintptr_t ustack_end = va_end;
+  uintptr_t ustack_end = (uintptr_t)pa_start + PGSIZE;
   // uintptr_t ustack_end = (uintptr_t)heap.end;
   uintptr_t ustack_top = ustack_end;
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
