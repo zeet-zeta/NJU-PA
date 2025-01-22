@@ -57,6 +57,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       void *pa = NULL;
       fs_lseek(fd, phdr.p_offset, SEEK_SET);
 
+      printf("--bigin---\n");
+
       if ((va & 0xfff) != 0) {
         //没对齐
         va &= ~0xfff;
