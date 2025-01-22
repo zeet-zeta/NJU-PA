@@ -7,6 +7,7 @@ extern void __am_switch(Context *);
 extern void __am_get_cur_as(Context *);
 
 #define USER_ECALL 11
+#define IRQ_TIMER 0x80000007
 // 这个参数来源于a0寄存器，参见trap.S
 Context* __am_irq_handle(Context *c) {
   __am_get_cur_as(c);
@@ -21,6 +22,7 @@ Context* __am_irq_handle(Context *c) {
           ev.event = EVENT_SYSCALL;
         }
         break;
+      case IRQ_TIMER: ev.event = EVENT_IRQ_TIMER; break;
       default: ev.event = EVENT_ERROR; break;
     }
 
