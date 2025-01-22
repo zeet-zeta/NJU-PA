@@ -61,9 +61,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
       if ((va & 0xfff) != 0) {
         //没对齐
-        va &= ~0xfff;
         int offset = va & 0xfff;
-        printf("offset=%d\n", offset);
+        va &= ~0xfff;
         pa = new_page(1);
         read_len = (offset + filesz > PGSIZE) ? PGSIZE - offset : filesz;
         map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
