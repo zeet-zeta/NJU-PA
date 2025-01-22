@@ -159,6 +159,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       pcb->max_brk = p_vaddr;
   }
   assert(fs_close(fd) == 0);
+  assert(0);
   return ehdr.e_entry;
 }
 
