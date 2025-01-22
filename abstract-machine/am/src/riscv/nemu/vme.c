@@ -24,7 +24,6 @@ static inline uintptr_t get_satp() {
   
   uintptr_t satp;
   asm volatile("csrr %0, satp" : "=r"(satp));
-  printf("get_satp: %p\n", satp << 12);
   return satp << 12;
 }
 
