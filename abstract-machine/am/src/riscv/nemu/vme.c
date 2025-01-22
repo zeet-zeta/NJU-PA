@@ -90,12 +90,12 @@ void __am_switch(Context *c) {
 
 static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
+  printf("current base: %p", as->ptr);
   printf("first_pte_addr: %p", first_pte);
   if ((*first_pte & PTE_V) == 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = (uintptr_t)new | prot;
   }
-  printf("current base: %p", as->ptr);
   // printf("base: %p first_pte_addr: %p first_pte: %x ", as->ptr, first_pte, *first_pte);
   PTE *second_pte = (PTE *)(*first_pte & ~0xfff) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
