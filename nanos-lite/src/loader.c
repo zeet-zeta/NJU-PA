@@ -63,6 +63,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         //没对齐
         va &= ~0xfff;
         int offset = va & 0xfff;
+        printf("offset=%d\n", offset);
         pa = new_page(1);
         read_len = (offset + filesz > PGSIZE) ? PGSIZE - offset : filesz;
         map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
@@ -71,7 +72,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         va += PGSIZE;
         filesz -= read_len;
         memsz -= read_len;
-        printf("readlen=%d filesz=%d", read_len, filesz+read_len);
+        printf("readlen=%d filesz=%d\n", read_len, filesz+read_len);
       }
       printf("---unaligned---\n");
 
