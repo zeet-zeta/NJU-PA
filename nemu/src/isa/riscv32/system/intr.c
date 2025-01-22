@@ -16,6 +16,7 @@
 #include <isa.h>
 #define IRQ_TIMER 0x80000007
 #define MSTATUS_MIE 0x00000008
+#define MSTATUS_MPIE 0x00000080
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
@@ -25,6 +26,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // return 0;
   cpu.mcause = NO;
   cpu.mepc = epc + 4;
+  cpu.mstatus = (cpu.mstatus & ~MSTATUS_MPIE) | ((cpu.mstatus & MSTATUS_MIE) << 4);
+  cpu.mstatus &= ~MSTATUS_MIE;
   return cpu.mtvec;
 }
 
