@@ -90,7 +90,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           memsz -= PGSIZE;
         }
       }
-
+      pcb->max_brk = va;
     }
   }
   fs_close(fd);
