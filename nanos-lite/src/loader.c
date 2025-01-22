@@ -94,6 +94,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   AddrSpace as = pcb->as;
   protect(&as);
   printf("base = %p \n", (pcb->as).ptr);
+  printf("base2 = %p \n", as.ptr);
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
