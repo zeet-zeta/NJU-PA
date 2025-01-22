@@ -31,7 +31,7 @@ int mm_brk(uintptr_t brk) {
   for (; current->max_brk < brk; current->max_brk += PGSIZE) {
     void *pa = new_page(1);
     map(&current->as, (void *)current->max_brk, pa, 1);
-    printf("brk: %p -> %p\n", current->max_brk, pa);
+    // printf("brk: %p -> %p\n", current->max_brk, pa);
   }
   return 0;
 }
