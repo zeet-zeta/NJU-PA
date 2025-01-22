@@ -101,7 +101,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     }
   }
   fs_close(fd);
-  assert(0);
+  // assert(0);
   return ehdr.e_entry;
 }
 
