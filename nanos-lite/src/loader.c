@@ -56,7 +56,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
       while (filesz > 0) {
         void *pa = new_page(1);
-        printf("hello! base=%p \n", pcb->as.ptr);
         map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
         size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
         fs_lseek(fd, offset, SEEK_SET);
