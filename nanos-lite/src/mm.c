@@ -9,7 +9,7 @@ void* new_page(size_t nr_page) {
   void *old = pf;
   pf += nr_page * PGSIZE;
 
-  memset(pf, 0, nr_page * PGSIZE);
+  // memset(pf, 0, nr_page * PGSIZE);
   // printf("new_page: %p\n", old);
   return old;
 }
