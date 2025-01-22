@@ -93,6 +93,9 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
+  uintptr_t entry = loader(pcb, filename);
+  printf("entry: %x\n", entry);
+  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
 
   uintptr_t va_end = (uintptr_t)as.area.end;
   uintptr_t va_start = va_end - 32 * 1024;
@@ -142,8 +145,5 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
-  uintptr_t entry = loader(pcb, filename);
-  printf("entry: %x\n", entry);
-  pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
   pcb->cp->GPRx = ustack_top;
 }
