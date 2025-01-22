@@ -91,19 +91,19 @@ void naive_uload(PCB *pcb, const char *filename) {
 }
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-  AddrSpace as = pcb->as;
-  protect(&as);
-  printf("base = %p \n", (pcb->as).ptr);
-  printf("base2 = %p \n", as.ptr);
+  // AddrSpace as = pcb->as;
+  // 大错特错，这里的as是pcb->as的一个副本
+  AddrSpace *as = &pcb->as;
+  protect(as);
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
 
-  uintptr_t va_end = (uintptr_t)as.area.end;
+  uintptr_t va_end = (uintptr_t)as->area.end;
   uintptr_t va_start = va_end - 32 * 1024;
   for (uintptr_t va = va_start; va < va_end; va += PGSIZE) {
     void *pa = new_page(1);
-    map(&as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
+    map(as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
   }
 
   int argc = 0;
