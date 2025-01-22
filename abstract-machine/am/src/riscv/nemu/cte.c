@@ -54,6 +54,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   c->mstatus = 1L << 7;
   c->GPR2 = (uintptr_t)arg; //给f函数传参
   c->pdir = NULL;
+  printf("kcontext: %d\n", c->pdir == NULL);
   return c;
 }
 
