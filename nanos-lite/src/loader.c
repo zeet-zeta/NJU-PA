@@ -49,112 +49,53 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     fs_lseek(fd, ehdr.e_phoff + i * ehdr.e_phentsize, SEEK_SET);
     fs_read(fd, &phdr, sizeof(Elf_Phdr));
     if (phdr.p_type == PT_LOAD) {
+      //虚拟地址版
       uintptr_t va = phdr.p_vaddr;
       int filesz = phdr.p_filesz;
       int memsz = phdr.p_memsz;
-      size_t offset = phdr.p_offset;
-      printf("va: %p\n", va);
-      assert((va & 0xfff) == 0);
+      int read_len = 0;
+      void *pa = NULL;
+      fs_lseek(fd, phdr.p_offset, SEEK_SET);
 
-      while (filesz > 0) {
-        void *pa = new_page(1);
-        map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-        size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
-        fs_lseek(fd, offset, SEEK_SET);
-        fs_read(fd, pa, read_size);
+      if ((va & 0xfff) != 0) {
+        //没对齐
+        va &= ~0xfff;
+        int offset = va & 0xfff;
+        pa = new_page(1);
+        read_len = (offset + filesz > PGSIZE) ? PGSIZE - offset : filesz;
+        map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
+        fs_read(fd, pa + offset, read_len);
 
         va += PGSIZE;
-        offset += PGSIZE;
-        filesz -= read_size;
-        memsz -= PGSIZE;
+        filesz -= read_len;
+        memsz -= read_len;
       }
-      if (memsz > 0) {
+
+      while (filesz > 0) {
+        pa = new_page(1);
+        read_len = (filesz > PGSIZE) ? PGSIZE : filesz;
+        map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
+        fs_read(fd, pa, read_len);
+        va += PGSIZE;
+        filesz -= read_len;
+        memsz -= read_len;
+      }
+
+      if (read_len + memsz > PGSIZE) {
+        memsz -= PGSIZE - read_len;
         while (memsz > 0) {
-          printf("memsz: %d\n", memsz);
-          void *pa = new_page(1);
-          map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-          memset(pa, 0, memsz < PGSIZE ? memsz : PGSIZE);
+          pa = new_page(1);
+          map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
           va += PGSIZE;
           memsz -= PGSIZE;
         }
       }
-      pcb->max_brk = phdr.p_vaddr;
+
     }
   }
   fs_close(fd);
   return ehdr.e_entry;
 }
-
-// #define min(x, y) ((x < y) ? x : y)
-// extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
-// extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
-// extern size_t get_ramdisk_size();
-
-// #define PG_MASK (0xfff)
-// #define IS_ALIGN(vaddr) ((0) == ((vaddr)&PG_MASK))
-// #define OFFSET(vaddr) ((vaddr) & (PG_MASK))
-
-// static uintptr_t loader(PCB *pcb, const char *filename) {
-//   // load elf header 
-//   Elf_Ehdr ehdr;
-//   int fd = fs_open(filename, 0, 0);     // 到 PA 最后阶段，这个函数执行失败时只会返回 -1
-//   if (fd < 0)
-//       assert(0);
-//   fs_read(fd, (void *)&ehdr, sizeof(Elf_Ehdr));
-//   assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
-
-//   // load program headers，通常Program headers 紧跟elf header，不需要调整 open_offset，但是还是设置了 phoff 指定 pheader 距离文件开头的偏移
-//   Elf_Phdr phdr[ehdr.e_phnum];
-//   fs_lseek(fd, ehdr.e_phoff, SEEK_SET);
-//   fs_read(fd, (void *)phdr, sizeof(Elf_Phdr) * ehdr.e_phnum);
-
-//   for (int i = 0; i < ehdr.e_phnum; i++) {
-//       if (phdr[i].p_type != PT_LOAD)
-//         continue;
-     
-//       uint32_t file_size = phdr[i].p_filesz;
-//       uint32_t p_vaddr = phdr[i].p_vaddr;
-//       uint32_t mem_size = phdr[i].p_memsz;
-//       int unprocessed_size = file_size;
-//       int read_len = 0;
-//       void *pg_p = NULL;
-//       fs_lseek(fd, phdr[i].p_offset, SEEK_SET);
-
-//       if (!IS_ALIGN(p_vaddr)) {
-//           pg_p = new_page(1);
-//           read_len = min(PGSIZE - OFFSET(p_vaddr), unprocessed_size);
-//           unprocessed_size -= read_len;
-//           assert(fs_read(fd, pg_p + OFFSET(p_vaddr), read_len) >= 0);
-//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
-//           p_vaddr += read_len;
-//       }
-//       for (; p_vaddr < phdr[i].p_vaddr + file_size; p_vaddr += PGSIZE) {
-//           assert(IS_ALIGN(p_vaddr));
-//           pg_p = new_page(1);
-//           //memset(pg_p, 0, PGSIZE);    // 我觉得这个清零操作可以省去，直接读程序覆盖内存
-//           read_len = min(PGSIZE, unprocessed_size);
-//           unprocessed_size -= read_len;
-//           assert(fs_read(fd, pg_p, read_len) >= 0);
-//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
-//       }
-//       if (file_size == mem_size) {
-//           pcb->max_brk = p_vaddr;
-//           continue;
-//       }
-//       memset(pg_p + read_len, 0, PGSIZE - read_len);
-//       for (; p_vaddr < phdr[i].p_vaddr + mem_size; p_vaddr += PGSIZE) {
-//           assert(IS_ALIGN(p_vaddr));
-//           pg_p = new_page(1);
-//           memset(pg_p, 0, PGSIZE);
-//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
-//       }
-//       // TODO: max_brk ?
-//       pcb->max_brk = p_vaddr;
-//   }
-//   assert(fs_close(fd) == 0);
-//   return ehdr.e_entry;
-// }
-
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
@@ -192,7 +133,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   }
 
   uintptr_t ustack_end = (uintptr_t)pa_start + PGSIZE * 10;
-  printf("ustack_end = %p\n", ustack_end);
   uintptr_t ustack_top = ustack_end;
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
   char *argv_copy[argc];
@@ -215,10 +155,6 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
-  printf("ustack_top = %p ustack_end = %p\n", ustack_top, ustack_end);
-  printf("va_end = %p\n", va_end);
-  printf("va_start = %p\n", va_start);
-  printf("%x\n", ustack_top - (ustack_end - va_end));
   pcb->cp->GPRx = ustack_top - (ustack_end - va_end); //改成虚拟地址
   // assert(0);
 }
