@@ -10,8 +10,17 @@ extern void context_uload(PCB *pcb, const char *filename, char *const argv[], ch
 extern void naive_uload(PCB *pcb, const char *filename);
 
 void hello_fun(void *arg) {
+  int j = 1;
   printf("Hello! ");
-  yield();
+  while (1) {
+    //bug的原因在于我尝试*(int *)arg，就会将读取0x00000001的内存，而不是arg的值
+    // printf("Hello! ");
+    j ++;
+    if (j % 100000 == 0) {
+      printf("Hello! ");
+    }
+    yield();
+  }
 }
 void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
   pcb->cp = kcontext((Area){pcb->stack, pcb + 1}, entry, arg);
@@ -21,7 +30,6 @@ Context *schedule(Context *prev) {
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   // current = &pcb[0];
-  printf("current: %p\n", current);
   return current->cp;
 }
 
