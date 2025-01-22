@@ -36,147 +36,123 @@
 extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
 extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 
-// static uintptr_t loader(PCB *pcb, const char *filename) {
-//   Elf_Ehdr ehdr;
-//   Elf_Phdr phdr;
-//   int fd = fs_open(filename, 0, 0);
-
-//   fs_read(fd, &ehdr, sizeof(Elf_Ehdr));
-//   assert(*(uint32_t *)ehdr.e_ident == 0x464c457f);
-//   assert(ehdr.e_machine == EXPECT_TYPE);
-
-//   for (int i = 0; i < ehdr.e_phnum; i++) {
-//     fs_lseek(fd, ehdr.e_phoff + i * ehdr.e_phentsize, SEEK_SET);
-//     fs_read(fd, &phdr, sizeof(Elf_Phdr));
-//     if (phdr.p_type == PT_LOAD) {
-//       uintptr_t va = phdr.p_vaddr;
-//       int filesz = phdr.p_filesz;
-//       int memsz = phdr.p_memsz;
-//       size_t offset = phdr.p_offset;
-
-//       while (filesz > 0) {
-//         void *pa = new_page(1);
-//         map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-//         size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
-//         fs_lseek(fd, offset, SEEK_SET);
-//         fs_read(fd, pa, read_size);
-
-//         va += PGSIZE;
-//         offset += PGSIZE;
-//         filesz -= read_size;
-//         memsz -= PGSIZE;
-//       }
-//       if (memsz > 0) {
-//         while (memsz > 0) {
-//           printf("memsz: %d\n", memsz);
-//           void *pa = new_page(1);
-//           map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-//           memset(pa, 0, memsz < PGSIZE ? memsz : PGSIZE);
-//           va += PGSIZE;
-//           memsz -= PGSIZE;
-//         }
-//       }
-//       pcb->max_brk = phdr.p_vaddr;
-//     }
-//   }
-//   fs_close(fd);
-//   return ehdr.e_entry;
-// }
-
-#define min(x, y) ((x < y) ? x : y)
-extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
-extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
-extern size_t get_ramdisk_size();
-
-/*static uintptr_t loader(PCB *pcb, const char *filename) {
- *  // load elf header 
- *  Elf_Ehdr ehdr;
- *  ramdisk_read((void *)&ehdr, 0, sizeof(Elf_Ehdr));
- *  assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
- *
- *  // load program headers
- *  Elf_Phdr phdr[ehdr.e_phnum];
- *  ramdisk_read(phdr, ehdr.e_phoff, sizeof(Elf_Phdr)*ehdr.e_phnum);
- *  
- *  // load segments
- *  for (int i = 0; i < ehdr.e_phnum; i++) {
- *      if (phdr[i].p_type == PT_LOAD) {
- *          ramdisk_read((void *)phdr[i].p_vaddr, phdr[i].p_offset, phdr[i].p_memsz);
- *          // bss 置为 0
- *          memset((void*)(phdr[i].p_vaddr+phdr[i].p_filesz), 0, phdr[i].p_memsz - phdr[i].p_filesz);
- *      }
- *  }
- *  return ehdr.e_entry;
- *}*/
-
-// ramdisk 被 fs 系列函数替代，以支持多文件的 ramdisk，fs 底层的实现依赖于 ramdisk_read write
-/*#define PG_MASK (~0xfff)
- *#define IS_ALIGN(vaddr) ((vaddr) == ((vaddr)&PG_MASK))
- *#define OFFSET(vaddr) ((vaddr) & (~PG_MASK))*/
-#define PG_MASK (0xfff)
-#define IS_ALIGN(vaddr) ((0) == ((vaddr)&PG_MASK))
-#define OFFSET(vaddr) ((vaddr) & (PG_MASK))
-
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  // load elf header 
   Elf_Ehdr ehdr;
-  int fd = fs_open(filename, 0, 0);     // 到 PA 最后阶段，这个函数执行失败时只会返回 -1
-  if (fd < 0)
-      assert(0);
-  fs_read(fd, (void *)&ehdr, sizeof(Elf_Ehdr));
-  assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
+  Elf_Phdr phdr;
+  int fd = fs_open(filename, 0, 0);
 
-  // load program headers，通常Program headers 紧跟elf header，不需要调整 open_offset，但是还是设置了 phoff 指定 pheader 距离文件开头的偏移
-  Elf_Phdr phdr[ehdr.e_phnum];
-  fs_lseek(fd, ehdr.e_phoff, SEEK_SET);
-  fs_read(fd, (void *)phdr, sizeof(Elf_Phdr) * ehdr.e_phnum);
+  fs_read(fd, &ehdr, sizeof(Elf_Ehdr));
+  assert(*(uint32_t *)ehdr.e_ident == 0x464c457f);
+  assert(ehdr.e_machine == EXPECT_TYPE);
 
   for (int i = 0; i < ehdr.e_phnum; i++) {
-      if (phdr[i].p_type != PT_LOAD)
-        continue;
-     
-      uint32_t file_size = phdr[i].p_filesz;
-      uint32_t p_vaddr = phdr[i].p_vaddr;
-      uint32_t mem_size = phdr[i].p_memsz;
-      int unprocessed_size = file_size;
-      int read_len = 0;
-      void *pg_p = NULL;
-      fs_lseek(fd, phdr[i].p_offset, SEEK_SET);
+    fs_lseek(fd, ehdr.e_phoff + i * ehdr.e_phentsize, SEEK_SET);
+    fs_read(fd, &phdr, sizeof(Elf_Phdr));
+    if (phdr.p_type == PT_LOAD) {
+      uintptr_t va = phdr.p_vaddr;
+      int filesz = phdr.p_filesz;
+      int memsz = phdr.p_memsz;
+      size_t offset = phdr.p_offset;
+      assert((va & 0xfff) == 0);
 
-      if (!IS_ALIGN(p_vaddr)) {
-          pg_p = new_page(1);
-          read_len = min(PGSIZE - OFFSET(p_vaddr), unprocessed_size);
-          unprocessed_size -= read_len;
-          assert(fs_read(fd, pg_p + OFFSET(p_vaddr), read_len) >= 0);
-          map(&pcb->as, (void *)p_vaddr, pg_p, 1);
-          p_vaddr += read_len;
+      while (filesz > 0) {
+        void *pa = new_page(1);
+        map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
+        size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
+        fs_lseek(fd, offset, SEEK_SET);
+        fs_read(fd, pa, read_size);
+
+        va += PGSIZE;
+        offset += PGSIZE;
+        filesz -= read_size;
+        memsz -= PGSIZE;
       }
-      for (; p_vaddr < phdr[i].p_vaddr + file_size; p_vaddr += PGSIZE) {
-          assert(IS_ALIGN(p_vaddr));
-          pg_p = new_page(1);
-          //memset(pg_p, 0, PGSIZE);    // 我觉得这个清零操作可以省去，直接读程序覆盖内存
-          read_len = min(PGSIZE, unprocessed_size);
-          unprocessed_size -= read_len;
-          assert(fs_read(fd, pg_p, read_len) >= 0);
-          map(&pcb->as, (void *)p_vaddr, pg_p, 1);
+      if (memsz > 0) {
+        while (memsz > 0) {
+          printf("memsz: %d\n", memsz);
+          void *pa = new_page(1);
+          map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
+          memset(pa, 0, memsz < PGSIZE ? memsz : PGSIZE);
+          va += PGSIZE;
+          memsz -= PGSIZE;
+        }
       }
-      if (file_size == mem_size) {
-          pcb->max_brk = p_vaddr;
-          continue;
-      }
-      memset(pg_p + read_len, 0, PGSIZE - read_len);
-      for (; p_vaddr < phdr[i].p_vaddr + mem_size; p_vaddr += PGSIZE) {
-          assert(IS_ALIGN(p_vaddr));
-          pg_p = new_page(1);
-          memset(pg_p, 0, PGSIZE);
-          map(&pcb->as, (void *)p_vaddr, pg_p, 1);
-      }
-      // TODO: max_brk ?
-      pcb->max_brk = p_vaddr;
+      pcb->max_brk = phdr.p_vaddr;
+    }
   }
-  assert(fs_close(fd) == 0);
+  fs_close(fd);
   return ehdr.e_entry;
 }
+
+// #define min(x, y) ((x < y) ? x : y)
+// extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
+// extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
+// extern size_t get_ramdisk_size();
+
+// #define PG_MASK (0xfff)
+// #define IS_ALIGN(vaddr) ((0) == ((vaddr)&PG_MASK))
+// #define OFFSET(vaddr) ((vaddr) & (PG_MASK))
+
+// static uintptr_t loader(PCB *pcb, const char *filename) {
+//   // load elf header 
+//   Elf_Ehdr ehdr;
+//   int fd = fs_open(filename, 0, 0);     // 到 PA 最后阶段，这个函数执行失败时只会返回 -1
+//   if (fd < 0)
+//       assert(0);
+//   fs_read(fd, (void *)&ehdr, sizeof(Elf_Ehdr));
+//   assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
+
+//   // load program headers，通常Program headers 紧跟elf header，不需要调整 open_offset，但是还是设置了 phoff 指定 pheader 距离文件开头的偏移
+//   Elf_Phdr phdr[ehdr.e_phnum];
+//   fs_lseek(fd, ehdr.e_phoff, SEEK_SET);
+//   fs_read(fd, (void *)phdr, sizeof(Elf_Phdr) * ehdr.e_phnum);
+
+//   for (int i = 0; i < ehdr.e_phnum; i++) {
+//       if (phdr[i].p_type != PT_LOAD)
+//         continue;
+     
+//       uint32_t file_size = phdr[i].p_filesz;
+//       uint32_t p_vaddr = phdr[i].p_vaddr;
+//       uint32_t mem_size = phdr[i].p_memsz;
+//       int unprocessed_size = file_size;
+//       int read_len = 0;
+//       void *pg_p = NULL;
+//       fs_lseek(fd, phdr[i].p_offset, SEEK_SET);
+
+//       if (!IS_ALIGN(p_vaddr)) {
+//           pg_p = new_page(1);
+//           read_len = min(PGSIZE - OFFSET(p_vaddr), unprocessed_size);
+//           unprocessed_size -= read_len;
+//           assert(fs_read(fd, pg_p + OFFSET(p_vaddr), read_len) >= 0);
+//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
+//           p_vaddr += read_len;
+//       }
+//       for (; p_vaddr < phdr[i].p_vaddr + file_size; p_vaddr += PGSIZE) {
+//           assert(IS_ALIGN(p_vaddr));
+//           pg_p = new_page(1);
+//           //memset(pg_p, 0, PGSIZE);    // 我觉得这个清零操作可以省去，直接读程序覆盖内存
+//           read_len = min(PGSIZE, unprocessed_size);
+//           unprocessed_size -= read_len;
+//           assert(fs_read(fd, pg_p, read_len) >= 0);
+//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
+//       }
+//       if (file_size == mem_size) {
+//           pcb->max_brk = p_vaddr;
+//           continue;
+//       }
+//       memset(pg_p + read_len, 0, PGSIZE - read_len);
+//       for (; p_vaddr < phdr[i].p_vaddr + mem_size; p_vaddr += PGSIZE) {
+//           assert(IS_ALIGN(p_vaddr));
+//           pg_p = new_page(1);
+//           memset(pg_p, 0, PGSIZE);
+//           map(&pcb->as, (void *)p_vaddr, pg_p, 1);
+//       }
+//       // TODO: max_brk ?
+//       pcb->max_brk = p_vaddr;
+//   }
+//   assert(fs_close(fd) == 0);
+//   return ehdr.e_entry;
+// }
 
 
 void naive_uload(PCB *pcb, const char *filename) {
