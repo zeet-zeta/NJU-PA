@@ -90,11 +90,8 @@ void naive_uload(PCB *pcb, const char *filename) {
 }
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-  // AddrSpace as = pcb->as;
-  // 大错特错，这里的as是pcb->as的一个副本
-  AddrSpace *as = &pcb->as;
-  protect(as);
 
+  AddrSpace *as = &pcb->as;
 
   uintptr_t va_end = (uintptr_t)as->area.end;
   uintptr_t va_start = va_end - 32 * 1024;
@@ -142,6 +139,9 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   ustack_top -= (argc + 1) * sizeof(char *);
   memcpy((void *)ustack_top, argv_copy, argc * sizeof(char *));
   
+  // AddrSpace as = pcb->as;
+  // 大错特错，这里的as是pcb->as的一个副本
+  protect(as);
   ustack_top -= sizeof(int);
   *(int *)ustack_top = argc;
   uintptr_t entry = loader(pcb, filename);
