@@ -26,7 +26,6 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 }
 
 Context *schedule(Context *prev) {
-  printf("[0] : %p [1] : %p\n", (&pcb[0])->cp->pdir, (&pcb[1])->cp->pdir);
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   // current = &pcb[0];
