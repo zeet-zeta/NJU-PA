@@ -87,42 +87,28 @@ void __am_switch(Context *c) {
                                              `- RSW (2 bits)
 */
 
-// static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
-//   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
-//   if ((*first_pte & PTE_V) == 0) { //缺页
-//     void *new = pgalloc_usr(PGSIZE);
-//     *first_pte = (uintptr_t)new | prot;
-//   }
-//   printf("first_pte_addr: %p first_pte: %x ", first_pte, *first_pte);
-//   PTE *second_pte = (PTE *)(*first_pte & ~0xfff) + (((uintptr_t)va >> 12) & 0x3ff);
-//   return second_pte;
-// }
-
-
-// //用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
-// void map(AddrSpace *as, void *va, void *pa, int prot) {
-//   va = (void *)((uintptr_t)va & ~0xfff);
-//   pa = (void *)((uintptr_t)pa & ~0xfff);
-//   PTE *pgdir = page_walk(as, va, prot);
-//   *pgdir = (uintptr_t)pa | prot;
-//   printf("second_pte_addr: %x second_pte: %x ", pgdir, *pgdir);
-//   printf("va: %p -> pa: %p \n", va, pa);
-// }
-
-void map(AddrSpace *as, void *va, void *pa, int prot) {
-  // printf("as->pdir:%p\n", as->ptr);
-  uint32_t vpn = (uint32_t)va >> 12;
-  uint32_t vpn1 = vpn >> 10;
-  uint32_t vpn0 = vpn & (0x3ff);
-  // assert(0);
-  if ((((uint32_t *)(as->ptr))[vpn1] & 1) == 0) {
-    ((uint32_t *)(as->ptr))[vpn1] =
-        ((uint32_t)pgalloc_usr(PGSIZE) & ~(PGSIZE - 1)) | 1;
+static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
+  PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
+  if ((*first_pte & PTE_V) == 0) { //缺页
+    void *new = pgalloc_usr(PGSIZE);
+    *first_pte = (uintptr_t)new | prot;
   }
-
-  ((uint32_t *)((uint32_t)((uint32_t *)(as->ptr))[vpn1] &
-                ~(PGSIZE - 1)))[vpn0] = ((uint32_t)pa & ~(PGSIZE - 1)) | 1;
+  printf("first_pte_addr: %p first_pte: %x ", first_pte, *first_pte);
+  PTE *second_pte = (PTE *)(*first_pte & ~0xfff) + (((uintptr_t)va >> 12) & 0x3ff);
+  return second_pte;
 }
+
+
+//用于将地址空间as中虚拟地址va所在的虚拟页, 以prot的权限映射到pa所在的物理页
+void map(AddrSpace *as, void *va, void *pa, int prot) {
+  va = (void *)((uintptr_t)va & ~0xfff);
+  pa = (void *)((uintptr_t)pa & ~0xfff);
+  PTE *pgdir = page_walk(as, va, prot);
+  *pgdir = (uintptr_t)pa | prot;
+  printf("second_pte_addr: %x second_pte: %x ", pgdir, *pgdir);
+  printf("va: %p -> pa: %p \n", va, pa);
+}
+
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *c = (Context *)((uint8_t *)kstack.end - sizeof(Context));
