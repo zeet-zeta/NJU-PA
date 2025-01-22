@@ -93,7 +93,7 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
     void *new = pgalloc_usr(PGSIZE);
     *first_pte = (uintptr_t)new | prot;
   }
-  printf("first_pte_addr: %p first_pte: %x ", first_pte, *first_pte);
+  printf("base: %p first_pte_addr: %p first_pte: %x ", as->ptr, first_pte, *first_pte);
   PTE *second_pte = (PTE *)(*first_pte & ~0xfff) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
 }
