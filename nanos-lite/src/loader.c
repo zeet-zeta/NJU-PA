@@ -57,7 +57,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       void *pa = NULL;
       fs_lseek(fd, phdr.p_offset, SEEK_SET);
 
-      printf("---begin---\n");
 
       if ((va & 0xfff) != 0) {
         //没对齐
@@ -71,12 +70,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         va += PGSIZE;
         filesz -= read_len;
         memsz -= read_len;
-        printf("readlen=%d filesz=%d\n", read_len, filesz+read_len);
       }
-      printf("---unaligned---\n");
 
       while (filesz > 0) {
-        printf("filesz=%d\n", filesz);
         pa = new_page(1);
         read_len = (filesz > PGSIZE) ? PGSIZE : filesz;
         map(&(pcb->as), (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
@@ -85,7 +81,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         filesz -= read_len;
         memsz -= read_len;
       }
-      printf("---mid---\n");
 
       if (read_len + memsz > PGSIZE) {
         memsz -= PGSIZE - read_len;
@@ -96,7 +91,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           memsz -= PGSIZE;
         }
       }
-      printf("---tail---\n");
       pcb->max_brk = va;
     }
   }
