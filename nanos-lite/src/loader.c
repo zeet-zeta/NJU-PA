@@ -146,5 +146,5 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   printf("va_start = %p\n", va_start);
   printf("%x\n", ustack_top - (ustack_end - va_end));
   pcb->cp->GPRx = ustack_top - (ustack_end - va_end); //改成虚拟地址
-  // assert(0);
+  assert(0);
 }
