@@ -91,10 +91,10 @@ static inline PTE* page_walk(AddrSpace *as, void *va, int prot) {
   PTE *first_pte = (PTE *)as->ptr + ((uintptr_t)va >> 22); //一个PTE是4字节
   if ((*first_pte & PTE_V) == 0) { //缺页
     void *new = pgalloc_usr(PGSIZE);
-    *first_pte = ((uintptr_t)new >> 2) | prot;
+    *first_pte = (uintptr_t)new | prot;
   }
   printf("first_pte: %x ", *first_pte);
-  PTE *second_pte = (PTE *)(((*first_pte) >> 10 << 12)) + (((uintptr_t)va >> 12) & 0x3ff);
+  PTE *second_pte = (PTE *)(*first_pte) + (((uintptr_t)va >> 12) & 0x3ff);
   return second_pte;
 }
 
@@ -104,7 +104,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   va = (void *)((uintptr_t)va & ~0xfff);
   pa = (void *)((uintptr_t)pa & ~0xfff);
   PTE *pgdir = page_walk(as, va, prot);
-  *pgdir = (((uintptr_t)pa) >> 2) | prot;
+  *pgdir = (uintptr_t)pa | prot;
   printf("second_pte: %x ", *pgdir);
   printf("va: %p -> pa: %p \n", va, pa);
 }
