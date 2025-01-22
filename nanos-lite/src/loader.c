@@ -117,7 +117,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     while (envp[envc] != NULL) envc++;
   }
 
-  uintptr_t ustack_end = (uintptr_t)pa_start + PGSIZE * 8;
+  uintptr_t ustack_end = (uintptr_t)pa_start + PGSIZE * 7;
   printf("ustack_end = %p\n", ustack_end);
   uintptr_t ustack_top = ustack_end;
   //此处不能使用malloc,其中一个原因是malloc和new_page分配的空间是冲突的
