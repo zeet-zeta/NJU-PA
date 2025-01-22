@@ -32,13 +32,14 @@ void do_syscall(Context *c) {
   a[1] = c->GPR2;
   a[2] = c->GPR3;
   a[3] = c->GPR4;
+  printf("syscall ID = %d\n", a[0]);
 
   switch (a[0]) {
     case SYS_exit:
       // naive_uload(NULL, "/bin/menu"); c->GPRx = 0; break;
       halt(0);break;
     case SYS_yield:
-      printf("SYS_yield \n");yield(); c->GPRx = 0; break;
+      yield(); c->GPRx = 0; break;
     case SYS_write:
       c->GPRx = fs_write(a[1], (void *)a[2], a[3]); break;
     case SYS_read:
