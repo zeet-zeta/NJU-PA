@@ -16,7 +16,6 @@ static Area segments[] = {      // Kernel memory mappings
 //指向页表基地址
 static inline void set_satp(void *pdir) {
   
-  printf("pdir: %p\n", pdir);
   uintptr_t mode = 1ul << (__riscv_xlen - 1);
   asm volatile("csrw satp, %0" : : "r"(mode | ((uintptr_t)pdir >> 12)));
 }
@@ -65,7 +64,6 @@ void __am_get_cur_as(Context *c) {
 }
 
 void __am_switch(Context *c) {
-  printf("switch to %p\n", c->pdir);
   if (vme_enable && c->pdir != NULL) {
     set_satp(c->pdir);
   }
