@@ -80,6 +80,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         filesz -= read_len;
         memsz -= read_len;
       }
+      printf("-------\n");
 
       if (read_len + memsz > PGSIZE) {
         memsz -= PGSIZE - read_len;
