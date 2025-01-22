@@ -109,7 +109,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   PTE *pgdir = page_walk(as, va, prot);
   *pgdir = (uintptr_t)pa | prot;
   // printf("second_pte_addr: %x second_pte: %x ", pgdir, *pgdir);
-  printf("va: %p -> pa: %p \n", va, pa);
+  // printf("va: %p -> pa: %p \n", va, pa);
 }
 
 
