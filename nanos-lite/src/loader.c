@@ -71,7 +71,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           printf("memsz: %d\n", memsz);
           void *pa = new_page(1);
           map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
-          memset(pa, 0, PGSIZE);
+          memset(pa, 0, memsz < PGSIZE ? memsz : PGSIZE);
           va += PGSIZE;
           memsz -= PGSIZE;
         }
