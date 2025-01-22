@@ -79,7 +79,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       // }
     }
   }
-  printf("close loader ");
   fs_close(fd);
   return ehdr.e_entry;
 }
