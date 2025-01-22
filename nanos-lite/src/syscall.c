@@ -38,7 +38,7 @@ void do_syscall(Context *c) {
       // naive_uload(NULL, "/bin/menu"); c->GPRx = 0; break;
       halt(0);break;
     case SYS_yield:
-      yield(); c->GPRx = 0; break;
+      printf("SYS_yield \n");yield(); c->GPRx = 0; break;
     case SYS_write:
       c->GPRx = fs_write(a[1], (void *)a[2], a[3]); break;
     case SYS_read:
