@@ -53,6 +53,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       int filesz = phdr.p_filesz;
       int memsz = phdr.p_memsz;
       size_t offset = phdr.p_offset;
+      printf("va: %p\n", va);
       assert((va & 0xfff) == 0);
 
       while (filesz > 0) {
