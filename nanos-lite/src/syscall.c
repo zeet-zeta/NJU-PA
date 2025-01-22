@@ -7,6 +7,7 @@
 extern void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
 extern void naive_uload(PCB *pcb, const char *filename);
 extern void switch_boot_pcb();
+extern int mm_brk(uintptr_t brk);
 
 int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
@@ -47,7 +48,7 @@ void do_syscall(Context *c) {
     case SYS_close:
       c->GPRx = fs_close(a[1]); break;
     case SYS_brk:
-      c->GPRx = 0; break;
+      c->GPRx = mm_brk(a[1]); break;
     case SYS_lseek:
       c->GPRx = fs_lseek(a[1], a[2], a[3]); break;
     case SYS_gettimeofday:
