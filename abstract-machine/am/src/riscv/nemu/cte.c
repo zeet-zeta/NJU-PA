@@ -10,7 +10,7 @@ extern void __am_get_cur_as(Context *);
 #define IRQ_TIMER 0x80000007
 // 这个参数来源于a0寄存器，参见trap.S
 Context* __am_irq_handle(Context *c) {
-  // __am_get_cur_as(c);
+  __am_get_cur_as(c);
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
