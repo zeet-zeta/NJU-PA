@@ -50,8 +50,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     fs_read(fd, &phdr, sizeof(Elf_Phdr));
     if (phdr.p_type == PT_LOAD) {
       uintptr_t va = phdr.p_vaddr;
-      size_t filesz = phdr.p_filesz;
-      size_t memsz = phdr.p_memsz;
+      int filesz = phdr.p_filesz;
+      int memsz = phdr.p_memsz;
       size_t offset = phdr.p_offset;
 
       while (filesz > 0) {
