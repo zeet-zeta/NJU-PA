@@ -316,7 +316,7 @@ static int decode_exec(Decode *s) {
   //ecall
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, s->dnpc = isa_raise_intr(11, s->pc));
   //mret
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , N, s->dnpc = cpu.mepc, printf("mret dnpc=%x\n", cpu.mepc));
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , N, s->dnpc = cpu.mepc, printf("mret dnpc=%x\n ", cpu.mepc));
 
   //csrw
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = *isa_csr_translate(imm), *isa_csr_translate(imm) = src1);
@@ -334,5 +334,8 @@ static int decode_exec(Decode *s) {
 int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   // printf("pc=%x : %x\n", cpu.pc, s->isa.inst.val);
+  if (cpu.pc < 0x80000000) {
+    printf("pc=%x : %x\n", cpu.pc, s->isa.inst.val);
+  }
   return decode_exec(s);
 }
