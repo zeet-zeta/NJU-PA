@@ -56,7 +56,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
       while (filesz > 0) {
         void *pa = new_page(1);
-        printf("hello!\n");
+        printf("hello! base=%p \n", pcb->as.ptr);
         map(&pcb->as, (void *)va, pa, PTE_R | PTE_W | PTE_X | PTE_V);
         size_t read_size = filesz < PGSIZE ? filesz : PGSIZE;
         fs_lseek(fd, offset, SEEK_SET);
@@ -93,7 +93,6 @@ void naive_uload(PCB *pcb, const char *filename) {
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   AddrSpace as = pcb->as;
   protect(&as);
-  printf("as: %p\n", as.ptr);
   uintptr_t entry = loader(pcb, filename);
   printf("entry: %x\n", entry);
   pcb->cp = ucontext(&(pcb->as), (Area){pcb->stack, pcb + 1}, (void *)entry);
