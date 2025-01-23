@@ -17,3 +17,5 @@ The following subprojects/components are included. Some of them are not fully im
 * [Abstract-Machine](https://github.com/NJU-ProjectN/abstract-machine)
 * [Nanos-lite](https://github.com/NJU-ProjectN/nanos-lite)
 * [Navy-apps](https://github.com/NJU-ProjectN/navy-apps)
+
+pa4的支持虚存管理的多道程序还是有问题，页表基址切换会出错，没想到把时钟中断写了就过oj了，甚善甚善
